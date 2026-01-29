@@ -1,0 +1,2221 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Báo Cáo Vượt Ngân Sách</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- DataTables -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.bootstrap5.min.css" />
+    
+    <!-- Flatpickr -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css" />
+    
+    <style>
+        :root {
+            --primary-color: #0d6efd;
+            --danger-color: #dc3545;
+            --success-color: #198754;
+            --checkbox-size: 18px;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, 
+                #e3f2fd 0%,     
+                #f3e5f5 25%,    /* tím nhạt */
+                #e8f5e9 50%,    /* xanh lá nhạt */
+                #fff3e0 75%,    /* cam nhạt */
+                #e0f7fa 100%    /* xanh ngọc nhạt */
+            );
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            font-size: 13px;
+            overflow-x: hidden;
+            padding-bottom: 20px;
+        }
+        
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+        
+        .header-bar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .header-bar h4 {
+            margin: 0;
+            font-weight: 600;
+            font-size: 1.5rem;
+        }
+        
+        .control-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            margin: 0 15px 20px 15px;
+            border-radius: 16px;
+            box-shadow: 
+                0 8px 32px rgba(31, 38, 135, 0.1),
+                0 4px 16px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-group label {
+            font-weight: 600;
+            margin: 0;
+            color: #2c3e50;
+            white-space: nowrap;
+        }
+        
+        .filter-group .form-control,
+        .filter-group .form-select {
+            max-width: 200px;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            font-size: 13px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            height: 38px;
+        }
+        
+        .filter-group .form-control:focus,
+        .filter-group .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+            transform: translateY(-1px);
+        }
+        
+        /* Modern Checkbox Styling */
+        .modern-checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s ease;
+            padding: 6px 10px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+        
+        .modern-checkbox-container:hover {
+            background: rgba(102, 126, 234, 0.05);
+            border-color: rgba(102, 126, 234, 0.4);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.1);
+        }
+        
+        .modern-checkbox-container:active {
+            transform: translateY(0);
+        }
+        
+        .modern-checkbox {
+            position: relative;
+            width: var(--checkbox-size);
+            height: var(--checkbox-size);
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modern-checkbox:checked {
+            background: #667eea;
+            border-color: #667eea;
+            animation: checkboxPop 0.3s ease;
+        }
+        
+        @keyframes checkboxPop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        .modern-checkbox:checked::after {
+            content: '✓';
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: checkmark 0.2s ease;
+        }
+        
+        @keyframes checkmark {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+            100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+        
+        .modern-checkbox:focus {
+            outline: none;
+            box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+        }
+        
+        .modern-checkbox-label {
+            color: #2c3e50;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+        
+        /* Data table container */
+        .data-table-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 
+                0 8px 32px rgba(31, 38, 135, 0.1),
+                0 4px 16px rgba(0, 0, 0, 0.05);
+            margin: 0 15px 20px 15px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .table-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .table-controls .form-control {
+            max-width: 300px;
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            padding: 8px 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            height: 38px;
+        }
+        
+        .table-controls .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+            transform: translateY(-1px);
+        }
+        
+        .table-controls .form-select {
+            max-width: 250px;
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            padding: 8px 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            height: 38px;
+        }
+        
+        .table-controls .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+            transform: translateY(-1px);
+        }
+        
+        /* Main table styling with sorting */
+        .main-table-container {
+            overflow-x: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            position: relative;
+        }
+        
+        .main-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 12px;
+            min-width: 1200px;
+        }
+        
+        /* Header with sorting */
+        .main-table thead th {
+            background: linear-gradient(to bottom, #4a6fa5, #3a5985);
+            color: white;
+            font-weight: 600;
+            border: none;
+            padding: 12px 10px;
+            font-size: 13px;
+            white-space: nowrap;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .main-table thead th.sortable:hover {
+            background: linear-gradient(to bottom, #3a5985, #2c3e50);
+        }
+        
+        .main-table thead th.sortable {
+            position: relative;
+            padding-right: 25px;
+        }
+        
+        .main-table thead th.sortable::after {
+            content: '↕';
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 10px;
+            opacity: 0.7;
+        }
+        
+        .main-table thead th.sortable.sort-asc::after {
+            content: '↑';
+            opacity: 1;
+        }
+        
+        .main-table thead th.sortable.sort-desc::after {
+            content: '↓';
+            opacity: 1;
+        }
+        
+        .main-table thead th:first-child {
+            border-top-left-radius: 8px;
+        }
+        
+        .main-table thead th:last-child {
+            border-top-right-radius: 8px;
+        }
+        
+        /* Body */
+        .main-table tbody td {
+            padding: 10px 10px;
+            border-bottom: 1px solid #eef2f7;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+        
+        .main-table tbody tr {
+            transition: all 0.2s ease;
+        }
+        
+        .main-table tbody tr:hover:not(.department-row):not(.total-row) {
+            background-color: rgba(74, 111, 165, 0.08);
+            transform: translateX(3px);
+        }
+        
+        /* Các class đặc biệt */
+        .negative-value {
+            background: linear-gradient(90deg, #c0392b 0%, #e74c3c 50%, #ec7063 100%);
+            color: white;
+            font-weight: 600;
+        }
+        
+        .department-row {
+            background: linear-gradient(to right, #4a6fa5 0%, #3a5985 100%);
+            color: white;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .department-row:hover {
+            opacity: 0.9;
+        }
+        
+        .department-row td {
+            padding: 15px 10px;
+        }
+        
+        .toggle-icon {
+            display: inline-block;
+            margin-right: 8px;
+            transition: transform 0.3s;
+            font-size: 10px;
+        }
+        
+        .toggle-icon.collapsed {
+            transform: rotate(-90deg);
+        }
+        
+        .total-row {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            font-weight: 700;
+        }
+        
+        /* Căn chỉnh các cột */
+        .number-format {
+            text-align: right;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace !important;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .percent-format {
+            text-align: center;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace !important;
+            font-weight: 600;
+        }
+        
+        .month-cell {
+            text-align: left;
+            padding-left: 12px;
+            font-weight: 600 !important;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            color: #2c3e50;
+        }
+        
+        .dept-cell {
+            text-align: left;
+            padding-left: 12px;
+            font-weight: 600 !important;
+            color: #2c3e50;
+        }
+        
+        /* Chart container */
+        .chart-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 
+                0 8px 32px rgba(31, 38, 135, 0.1),
+                0 4px 16px rgba(0, 0, 0, 0.05);
+            margin: 0 15px 20px 15px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .chart-header {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(93, 156, 236, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .chart-title {
+            font-weight: 700;
+            font-size: 16px;
+            margin: 0;
+            color: #2c3e50;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(90deg, 
+                #2c3e50 0%, 
+                #4a6fa5 50%, 
+                #2c3e50 100%
+            );
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            background-size: 200% 100%;
+            animation: titleShimmer 3s linear infinite;
+        }
+        
+        @keyframes titleShimmer {
+            0% {
+                background-position: -200% 0;
+            }
+            100% {
+                background-position: 200% 0;
+            }
+        }
+        
+        .chart-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .chart-selector label {
+            font-weight: 500;
+            margin: 0;
+            font-size: 13px;
+            color: #2c3e50;
+            white-space: nowrap;
+        }
+        
+        .chart-selector select {
+            min-width: 200px;
+            font-size: 13px;
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            padding: 8px 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            height: 38px;
+        }
+        
+        .chart-selector select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+            transform: translateY(-1px);
+        }
+        
+        /* CHẾ ĐỘ VỪA PHẢI - Không cuộn */
+        .chart-mode-compact {
+            height: 350px;
+            position: relative;
+            padding: 15px;
+            background: linear-gradient(to bottom right, #ffffff, #f8f9fa);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        /* CHẾ ĐỘ CUỘN NGANG - Có cuộn */
+        .chart-mode-scrollable {
+            height: 450px;
+            position: relative;
+            padding: 20px;
+            background: linear-gradient(to bottom right, #ffffff, #f8f9fa);
+            border-radius: 10px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: #4a6fa5 #f1f1f1;
+        }
+        
+        .chart-mode-scrollable::-webkit-scrollbar {
+            height: 8px;
+        }
+        
+        .chart-mode-scrollable::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        .chart-mode-scrollable::-webkit-scrollbar-thumb {
+            background: linear-gradient(to right, #4a6fa5, #3a5985);
+            border-radius: 4px;
+        }
+        
+        .chart-mode-scrollable::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(to right, #3a5985, #2c3e50);
+        }
+        
+        /* Canvas wrapper cho chế độ cuộn */
+        .chart-canvas-scrollable {
+            min-width: 800px;
+            height: 100%;
+        }
+        
+        /* Chart mode toggle buttons */
+        .chart-mode-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-left: auto;
+        }
+        
+        .chart-mode-btn {
+            padding: 6px 12px;
+            border: 1px solid #ced4da;
+            background: white;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #6c757d;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .chart-mode-btn:hover {
+            border-color: #4a6fa5;
+            color: #4a6fa5;
+            transform: translateY(-1px);
+        }
+        
+        .chart-mode-btn.active {
+            background: #4a6fa5;
+            border-color: #4a6fa5;
+            color: white;
+            box-shadow: 0 2px 8px rgba(74, 111, 165, 0.3);
+        }
+        
+        /* Scrollbar styling */
+        .main-table-container::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        
+        .main-table-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .main-table-container::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, #4a6fa5, #3a5985);
+            border-radius: 10px;
+            border: 2px solid #f1f1f1;
+        }
+        
+        .main-table-container::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(to bottom, #3a5985, #2c3e50);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .control-panel, .data-table-container, .chart-container {
+                margin: 0 10px 15px 10px;
+                padding: 15px;
+            }
+            
+            .filter-group {
+                gap: 10px;
+            }
+            
+            .filter-group label {
+                font-size: 12px;
+            }
+            
+            .filter-group .form-control,
+            .filter-group .form-select {
+                max-width: 180px;
+                font-size: 12px;
+                height: 36px;
+            }
+            
+            .modern-checkbox-container {
+                padding: 5px 8px;
+            }
+            
+            .modern-checkbox-label {
+                font-size: 12px;
+            }
+            
+            .chart-selector select {
+                min-width: 180px;
+            }
+            
+            .chart-mode-compact {
+                height: 300px;
+                padding: 12px;
+            }
+            
+            .chart-mode-scrollable {
+                height: 400px;
+            }
+            
+            .chart-canvas-scrollable {
+                min-width: 700px;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .header-bar h4 {
+                font-size: 1.3rem;
+            }
+            
+            .filter-group {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            
+            .filter-group > div {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                width: 100%;
+            }
+            
+            .filter-group label {
+                min-width: 100px;
+                font-size: 12px;
+            }
+            
+            .filter-group .form-control,
+            .filter-group .form-select {
+                max-width: 100%;
+                flex: 1;
+                font-size: 12px;
+            }
+            
+            .modern-checkbox-container {
+                width: 100%;
+                justify-content: flex-start;
+            }
+            
+            .modern-checkbox-label {
+                font-size: 12px;
+            }
+            
+            .chart-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .chart-selector {
+                width: 100%;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .chart-selector label {
+                font-size: 12px;
+            }
+            
+            .chart-selector select {
+                min-width: 100%;
+                width: 100%;
+                font-size: 12px;
+            }
+            
+            .table-controls {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+            
+            .table-controls .form-control,
+            .table-controls .form-select {
+                max-width: 100%;
+                width: 100%;
+                font-size: 12px;
+            }
+            
+            .chart-mode-compact {
+                height: 280px;
+            }
+            
+            .chart-mode-scrollable {
+                height: 350px;
+            }
+            
+            .chart-canvas-scrollable {
+                min-width: 600px;
+            }
+            
+            .main-table {
+                font-size: 11px;
+            }
+            
+            .main-table thead th {
+                font-size: 12px;
+                padding: 10px 8px;
+            }
+            
+            .main-table tbody td {
+                padding: 8px 6px;
+                font-size: 11px;
+            }
+            
+            .chart-mode-toggle {
+                margin-left: 0;
+                margin-top: 10px;
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-bar {
+                padding: 12px 0;
+            }
+            
+            .header-bar h4 {
+                font-size: 1.2rem;
+                text-align: center;
+            }
+            
+            .control-panel, .data-table-container, .chart-container {
+                margin: 0 8px 12px 8px;
+                padding: 12px;
+                border-radius: 12px;
+            }
+            
+            .filter-group > div {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+                width: 100%;
+            }
+            
+            .filter-group label {
+                min-width: auto;
+                font-size: 11px;
+            }
+            
+            .filter-group .form-control,
+            .filter-group .form-select {
+                font-size: 11px;
+                height: 34px;
+                width: 100%;
+            }
+            
+            .modern-checkbox-container {
+                padding: 4px 6px;
+                font-size: 11px;
+            }
+            
+            .modern-checkbox-label {
+                font-size: 11px;
+            }
+            
+            .chart-title {
+                font-size: 14px;
+            }
+            
+            .chart-mode-compact {
+                height: 250px;
+                padding: 10px;
+            }
+            
+            .chart-mode-scrollable {
+                height: 300px;
+                padding: 12px;
+            }
+            
+            .chart-canvas-scrollable {
+                min-width: 550px;
+            }
+            
+            .main-table {
+                min-width: 1000px;
+            }
+            
+            .table-controls {
+                margin-bottom: 10px;
+            }
+            
+            .chart-selector select {
+                height: 34px;
+                font-size: 11px;
+                padding: 6px 10px;
+            }
+            
+            .chart-selector label {
+                font-size: 11px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            body {
+                font-size: 12px;
+            }
+            
+            .header-bar {
+                margin-bottom: 15px;
+            }
+            
+            .control-panel, .data-table-container, .chart-container {
+                margin: 0 5px 10px 5px;
+                padding: 10px;
+                border-radius: 10px;
+            }
+            
+            .filter-group {
+                gap: 8px;
+            }
+            
+            .filter-group label {
+                font-size: 10px;
+            }
+            
+            .modern-checkbox {
+                width: 16px;
+                height: 16px;
+            }
+            
+            .modern-checkbox:checked::after {
+                font-size: 10px;
+            }
+            
+            .chart-mode-compact {
+                height: 220px;
+                padding: 8px;
+            }
+            
+            .chart-mode-scrollable {
+                height: 280px;
+                padding: 10px;
+            }
+            
+            .chart-canvas-scrollable {
+                min-width: 500px;
+            }
+            
+            .chart-title {
+                font-size: 13px;
+            }
+            
+            .main-table thead th {
+                font-size: 11px;
+                padding: 8px 6px;
+            }
+            
+            .main-table tbody td {
+                padding: 6px 4px;
+                font-size: 10px;
+            }
+            
+            .department-row td {
+                padding: 10px 6px;
+            }
+            
+            .toggle-icon {
+                font-size: 8px;
+            }
+            
+            .chart-mode-btn {
+                padding: 5px 10px;
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header-bar">
+        <div class="container-fluid">
+            <h4>THỐNG KÊ SỬ DỤNG</h4>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <div class="filter-group">
+                <div>
+                    <label for="yearSelect">Chọn Năm</label>
+                    <select class="form-select" id="yearSelect">
+                        <option value="" selected>Tất cả</option>
+                        <option value="2025">2025</option>
+                        <option value="2026">2026</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="monthPicker">Đến tháng</label>
+                    <input type="text" class="form-control" id="monthPicker" placeholder="Tất cả các tháng">
+                </div>
+
+                <!-- Checkbox "Tất cả các tháng" -->
+                <div class="modern-checkbox-container">
+                    <input type="checkbox" class="modern-checkbox" id="allMonthsCheck" checked>
+                    <label class="modern-checkbox-label" for="allMonthsCheck">
+                        Tất cả các tháng
+                    </label>
+                </div>
+
+                <!-- Checkbox "Nhóm bộ phận" -->
+                <div class="modern-checkbox-container">
+                    <input class="modern-checkbox" type="checkbox" id="groupByDeptCheck" checked>
+                    <label class="modern-checkbox-label" for="groupByDeptCheck">
+                        Nhóm bộ phận
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Combined Data Table -->
+        <div class="data-table-container">
+            <div class="table-controls">
+                <div class="input-group" style="max-width: 300px;">
+                    <input type="text" class="form-control" id="searchInput" placeholder="Tìm kiếm...">
+                </div>
+                
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <select class="form-select" id="deptFilterSelect">
+                        <option value="">Tất cả bộ phận</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="main-table-container">
+                <table id="mainTable" class="main-table">
+                    <thead id="tableHeader">
+                    </thead>
+                    <tbody id="mainTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Chart Section -->
+        <div class="chart-container">
+            <div class="chart-header">
+                <h5 class="chart-title">Biểu đồ ngân sách</h5>
+                <div class="chart-selector">
+                    <label for="departmentSelect">Bộ phận:</label>
+                    <select class="form-select" id="departmentSelect">
+                    </select>
+                </div>
+                <!-- Nút chuyển đổi chế độ -->
+                <div class="chart-mode-toggle">
+                    <button class="chart-mode-btn active" id="compactModeBtn">Vừa phải</button>
+                    <button class="chart-mode-btn" id="scrollModeBtn">Cuộn ngang</button>
+                </div>
+            </div>
+            
+            <!-- Container biểu đồ - Thay đổi class dựa vào chế độ -->
+            <div class="chart-mode-compact" id="chartContainer">
+                <canvas id="mainChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/2.3.4/js/dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/2.3.4/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/vn.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+
+    <script>
+        // Biến toàn cục
+        let currentChart = null;
+        let isGroupedByDept = true;
+        let expandedDepts = new Set();
+        let selectedYear = '';
+        let selectedMonth = '';
+        let monthPickerInstance = null;
+        let chartMode = 'compact'; 
+        const allDepartments = {
+            "NSIP Đội Tàu Lai": [
+                {
+                    "thang": "202501",
+                    "ngan_sach_thang": 262844477.33333334,
+                    "da_su_dung": 38268000.0,
+                    "phan_tram_thang": 14.56,
+                    "con_lai_thang": 224576477.33,
+                    "ngan_sach_nam": 0.0,
+                    "phan_tram_nam": -100.0,
+                    "luy_ke": 38268000.0,
+                    "phan_tram_luy_ke": -100.0,
+                    "con_lai_luy_ke": 0.0
+                },
+                {
+                    "thang": "202502",
+                    "ngan_sach_thang": 174842537.33333334,
+                    "da_su_dung": 3348900.0,
+                    "phan_tram_thang": 1.92,
+                    "con_lai_thang": 171493637.33,
+                    "ngan_sach_nam": 0.0,
+                    "phan_tram_nam": -100.0,
+                    "luy_ke": 41616900.0,
+                    "phan_tram_luy_ke": -100.0,
+                    "con_lai_luy_ke": 0.0
+                },
+                {
+                    "thang": "202503",
+                    "ngan_sach_thang": 225791897.33333334,
+                    "da_su_dung": 531774380.0,
+                    "phan_tram_thang": 235.52,
+                    "con_lai_thang": -305982482.67,
+                    "ngan_sach_nam": 0.0,
+                    "phan_tram_nam": -100.0,
+                    "luy_ke": 573391280.0,
+                    "phan_tram_luy_ke": -100.0,
+                    "con_lai_luy_ke": 0.0
+                },
+                {
+                    "thang": "202504",
+                    "ngan_sach_thang": 2627986577.2833333,
+                    "da_su_dung": 0.0,
+                    "phan_tram_thang": 0.0,
+                    "con_lai_thang": 2627986577.28,
+                    "ngan_sach_nam": 0.0,
+                    "phan_tram_nam": -100.0,
+                    "luy_ke": 573391280.0,
+                    "phan_tram_luy_ke": -100.0,
+                    "con_lai_luy_ke": 0.0
+                },
+                {
+                    "thang": "202505",
+                    "ngan_sach_thang": 263083417.33333334,
+                    "da_su_dung": 275676557.0,
+                    "phan_tram_thang": 104.79,
+                    "con_lai_thang": -12593139.67,
+                    "ngan_sach_nam": 0.0,
+                    "phan_tram_nam": -100.0,
+                    "luy_ke": 849067837.0,
+                    "phan_tram_luy_ke": -100.0,
+                    "con_lai_luy_ke": 0.0
+                },
+                {
+                    "thang": "202506",
+                    "ngan_sach_thang": 264553817.33333334,
+                    "da_su_dung": 0.0,
+                    "phan_tram_thang": 0.0,
+                    "con_lai_thang": 264553817.33,
+                    "ngan_sach_nam": 0.0,
+                    "phan_tram_nam": -100.0,
+                    "luy_ke": 849067837.0,
+                    "phan_tram_luy_ke": -100.0,
+                    "con_lai_luy_ke": 0.0
+                },
+                {
+                    "thang": "202507",
+                    "ngan_sach_thang": 263083417.33333334,
+                    "da_su_dung": 469710297.88,
+                    "phan_tram_thang": 178.54,
+                    "con_lai_thang": -206626880.55,
+                    "ngan_sach_nam": 0.0,
+                    "phan_tram_nam": -100.0,
+                    "luy_ke": 1318778134.88,
+                    "phan_tram_luy_ke": -100.0,
+                    "con_lai_luy_ke": 0.0
+                },
+                {
+                    "thang": "202508",
+                    "ngan_sach_thang": 257275337.33333334,
+                    "da_su_dung": 0.0,
+                    "phan_tram_thang": 0.0,
+                    "con_lai_thang": 257275337.33,
+                    "ngan_sach_nam": 0.0,
+                    "phan_tram_nam": -100.0,
+                    "luy_ke": 1318778134.88,
+                    "phan_tram_luy_ke": -100.0,
+                    "con_lai_luy_ke": 0.0
+                },
+                {
+                    "thang": "202509",
+                    "ngan_sach_thang": 264553817.33333334,
+                    "da_su_dung": 0.0,
+                    "phan_tram_thang": 0.0,
+                    "con_lai_thang": 264553817.33,
+                    "ngan_sach_nam": 0.0,
+                    "phan_tram_nam": -100.0,
+                    "luy_ke": 1318778134.88,
+                    "phan_tram_luy_ke": -100.0,
+                    "con_lai_luy_ke": 0.0
+                },
+                {
+                    "thang": "202510",
+                    "ngan_sach_thang": 2630927377.2833333,
+                    "da_su_dung": 364574984.0,
+                    "phan_tram_thang": 13.86,
+                    "con_lai_thang": 2266352393.28,
+                    "ngan_sach_nam": 0.0,
+                    "phan_tram_nam": -100.0,
+                    "luy_ke": 1683353118.88,
+                    "phan_tram_luy_ke": -100.0,
+                    "con_lai_luy_ke": 0.0
+                },
+                {
+                    "thang": "202511",
+                    "ngan_sach_thang": 266024217.33333334,
+                    "da_su_dung": 466250000.0,
+                    "phan_tram_thang": 175.27,
+                    "con_lai_thang": -200225782.67,
+                    "ngan_sach_nam": 0.0,
+                    "phan_tram_nam": -100.0,
+                    "luy_ke": 2149603118.88,
+                    "phan_tram_luy_ke": -100.0,
+                    "con_lai_luy_ke": 0.0
+                },
+                {
+                    "thang": "202512",
+                    "ngan_sach_thang": 266024217.33333334,
+                    "da_su_dung": 0.0,
+                    "phan_tram_thang": 0.0,
+                    "con_lai_thang": 266024217.33,
+                    "ngan_sach_nam": 0.0,
+                    "phan_tram_nam": -100.0,
+                    "luy_ke": 2149603118.88,
+                    "phan_tram_luy_ke": -100.0,
+                    "con_lai_luy_ke": 0.0
+                }
+            ],
+            "NSIP ĐỘI TÀU LAI DẮT": [
+                {
+                    "thang": "202601",
+                    "ngan_sach_thang": 287901805.1333333,
+                    "da_su_dung": 0.0,
+                    "phan_tram_thang": 0.0,
+                    "con_lai_thang": 287901805.13,
+                    "ngan_sach_nam": 3572350299.0,
+                    "phan_tram_nam": 0.0,
+                    "luy_ke": 0.0,
+                    "phan_tram_luy_ke": 0.0,
+                    "con_lai_luy_ke": 3572350299.0
+                },
+                {
+                    "thang": "202602",
+                    "ngan_sach_thang": 214528353.33333334,
+                    "da_su_dung": 0.0,
+                    "phan_tram_thang": 0.0,
+                    "con_lai_thang": 214528353.33,
+                    "ngan_sach_nam": 3572350299.0,
+                    "phan_tram_nam": 0.0,
+                    "luy_ke": 0.0,
+                    "phan_tram_luy_ke": 0.0,
+                    "con_lai_luy_ke": 3572350299.0
+                },
+                {
+                    "thang": "202603",
+                    "ngan_sach_thang": 278312261.3333333,
+                    "da_su_dung": 0.0,
+                    "phan_tram_thang": 0.0,
+                    "con_lai_thang": 278312261.33,
+                    "ngan_sach_nam": 3572350299.0,
+                    "phan_tram_nam": 0.0,
+                    "luy_ke": 0.0,
+                    "phan_tram_luy_ke": 0.0,
+                    "con_lai_luy_ke": 3572350299.0
+                },
+                {
+                    "thang": "202604",
+                    "ngan_sach_thang": 353034516.5333334,
+                    "da_su_dung": 0.0,
+                    "phan_tram_thang": 0.0,
+                    "con_lai_thang": 353034516.53,
+                    "ngan_sach_nam": 3572350299.0,
+                    "phan_tram_nam": 0.0,
+                    "luy_ke": 0.0,
+                    "phan_tram_luy_ke": 0.0,
+                    "con_lai_luy_ke": 3572350299.0
+                },
+                {
+                    "thang": "202605",
+                    "ngan_sach_thang": 280563950.1333333,
+                    "da_su_dung": 0.0,
+                    "phan_tram_thang": 0.0,
+                    "con_lai_thang": 280563950.13,
+                    "ngan_sach_nam": 3572350299.0,
+                    "phan_tram_nam": 0.0,
+                    "luy_ke": 0.0,
+                    "phan_tram_luy_ke": 0.0,
+                    "con_lai_luy_ke": 3572350299.0
+                },
+                {
+                    "thang": "202606",
+                    "ngan_sach_thang": 287319016.5333334,
+                    "da_su_dung": 0.0,
+                    "phan_tram_thang": 0.0,
+                    "con_lai_thang": 287319016.53,
+                    "ngan_sach_nam": 3572350299.0,
+                    "phan_tram_nam": 0.0,
+                    "luy_ke": 0.0,
+                    "phan_tram_luy_ke": 0.0,
+                    "con_lai_luy_ke": 3572350299.0
+                },
+                {
+                    "thang": "202607",
+                    "ngan_sach_thang": 287319016.5333334,
+                    "da_su_dung": 0.0,
+                    "phan_tram_thang": 0.0,
+                    "con_lai_thang": 287319016.53,
+                    "ngan_sach_nam": 3572350299.0,
+                    "phan_tram_nam": 0.0,
+                    "luy_ke": 0.0,
+                    "phan_tram_luy_ke": 0.0,
+                    "con_lai_luy_ke": 3572350299.0
+                },
+                {
+                    "thang": "202608",
+                    "ngan_sach_thang": 291822394.1333333,
+                    "da_su_dung": 0.0,
+                    "phan_tram_thang": 0.0,
+                    "con_lai_thang": 291822394.13,
+                    "ngan_sach_nam": 3572350299.0,
+                    "phan_tram_nam": 0.0,
+                    "luy_ke": 0.0,
+                    "phan_tram_luy_ke": 0.0,
+                    "con_lai_luy_ke": 3572350299.0
+                },
+                {
+                    "thang": "202609",
+                    "ngan_sach_thang": 282815638.93333334,
+                    "da_su_dung": 0.0,
+                    "phan_tram_thang": 0.0,
+                    "con_lai_thang": 282815638.93,
+                    "ngan_sach_nam": 3572350299.0,
+                    "phan_tram_nam": 0.0,
+                    "luy_ke": 0.0,
+                    "phan_tram_luy_ke": 0.0,
+                    "con_lai_luy_ke": 3572350299.0
+                },
+                {
+                    "thang": "202610",
+                    "ngan_sach_thang": 386809848.5333333,
+                    "da_su_dung": 0.0,
+                    "phan_tram_thang": 0.0,
+                    "con_lai_thang": 386809848.53,
+                    "ngan_sach_nam": 3572350299.0,
+                    "phan_tram_nam": 0.0,
+                    "luy_ke": 0.0,
+                    "phan_tram_luy_ke": 0.0,
+                    "con_lai_luy_ke": 3572350299.0
+                },
+                {
+                    "thang": "202611",
+                    "ngan_sach_thang": 307584215.73333335,
+                    "da_su_dung": 0.0,
+                    "phan_tram_thang": 0.0,
+                    "con_lai_thang": 307584215.73,
+                    "ngan_sach_nam": 3572350299.0,
+                    "phan_tram_nam": 0.0,
+                    "luy_ke": 0.0,
+                    "phan_tram_luy_ke": 0.0,
+                    "con_lai_luy_ke": 3572350299.0
+                },
+                {
+                    "thang": "202612",
+                    "ngan_sach_thang": 314339282.1333333,
+                    "da_su_dung": 0.0,
+                    "phan_tram_thang": 0.0,
+                    "con_lai_thang": 314339282.13,
+                    "ngan_sach_nam": 3572350299.0,
+                    "phan_tram_nam": 0.0,
+                    "luy_ke": 0.0,
+                    "phan_tram_luy_ke": 0.0,
+                    "con_lai_luy_ke": 3572350299.0
+                }
+            ]
+        };
+        
+        // Biến cho sắp xếp
+        let currentSortColumn = null;
+        let currentSortDirection = 'asc';
+        
+        // Định dạng tiền
+        function formatCurrency(value) {
+            if (value === null || value === undefined || isNaN(value)) return '0 Vnd';
+            return Math.round(value).toLocaleString('vi-VN') + ' Vnd';
+        }
+
+        // Dịnh dạng tháng
+        function formatMonth(monthStr) {
+            if (!monthStr) return '';
+            return monthStr;
+        }
+
+        // Chuyển chuỗi thành số
+        function parseCurrency(currencyStr) {
+            if (!currencyStr || currencyStr === '0 Vnd') return 0;
+            const numStr = currencyStr.replace(/[^0-9.-]+/g, '');
+            return parseFloat(numStr) || 0;
+        }
+
+        // CHuyển chuỗi % thành số
+        function parsePercentage(percentStr) {
+            if (!percentStr || percentStr === '0%') return 0;
+            const numStr = percentStr.replace('%', '');
+            return parseFloat(numStr) || 0;
+        }
+
+        // Check dữ liệu có đúng bộ lọc
+        function matchesYearMonthFilter(monthStr) {
+            if (!monthStr) return false;
+            const year = monthStr.substring(0, 4);
+            const month = monthStr.substring(4, 6);
+            if (selectedYear && year !== selectedYear) return false;
+            if (selectedMonth) {
+                const selectedMonthNum = selectedMonth.substring(5, 7);
+                if (month !== selectedMonthNum) return false;
+            }
+            return true;
+        }
+
+        // Lọc dữ liệu bằng năm tháng
+        function filterDataByYearMonth(data) {
+            if (!selectedYear && !selectedMonth) return data;
+            return data.filter(row => matchesYearMonthFilter(row.thang));
+        }
+
+        // Mở đóng bộ phận
+        function toggleDepartment(deptName) {
+            if (expandedDepts.has(deptName)) {
+                expandedDepts.delete(deptName);
+            } else {
+                expandedDepts.add(deptName);
+            }
+            loadCombinedTableData();
+        }
+
+        // Sắp xếp dữ liệu bảng
+        function sortTableData() {
+            const tbody = document.getElementById('mainTableBody');
+            const rows = Array.from(tbody.querySelectorAll('tr:not(.department-row):not(.total-row)'));
+            
+            if (!currentSortColumn || rows.length === 0) return;
+            
+            // Tìm index của cột cần sắp xếp
+            const headerCells = document.querySelectorAll('#tableHeader th');
+            let columnIndex = -1;
+            headerCells.forEach((cell, index) => {
+                if (cell === currentSortColumn) {
+                    columnIndex = index;
+                }
+            });
+            
+            if (columnIndex === -1) return;
+            
+            // Sắp xếp các dòng
+            rows.sort((a, b) => {
+                const aCell = a.cells[columnIndex];
+                const bCell = b.cells[columnIndex];
+                
+                let aValue, bValue;
+                
+                // Xác định kiểu dữ liệu để so sánh
+                if (aCell.classList.contains('number-format')) {
+                    // Số tiền
+                    aValue = parseCurrency(aCell.textContent);
+                    bValue = parseCurrency(bCell.textContent);
+                } else if (aCell.classList.contains('percent-format')) {
+                    // Phần trăm
+                    aValue = parsePercentage(aCell.textContent);
+                    bValue = parsePercentage(bCell.textContent);
+                } else if (aCell.classList.contains('month-cell')) {
+                    // Tháng (YYYYMM)
+                    aValue = aCell.textContent;
+                    bValue = bCell.textContent;
+                } else {
+                    // Text thông thường
+                    aValue = aCell.textContent.toLowerCase();
+                    bValue = bCell.textContent.toLowerCase();
+                }
+                
+                // So sánh
+                if (aValue < bValue) return currentSortDirection === 'asc' ? -1 : 1;
+                if (aValue > bValue) return currentSortDirection === 'asc' ? 1 : -1;
+                return 0;
+            });
+            
+            // Sắp xếp lại các department row và total row
+            const departmentRows = Array.from(tbody.querySelectorAll('.department-row'));
+            const totalRows = Array.from(tbody.querySelectorAll('.total-row'));
+            
+            // Gom nhóm dữ liệu theo department
+            const departmentData = new Map();
+            
+            departmentRows.forEach(deptRow => {
+                const deptName = deptRow.getAttribute('data-dept');
+                const deptRows = rows.filter(row => row.getAttribute('data-dept') === deptName);
+                const deptTotalRow = totalRows.find(row => row.getAttribute('data-dept') === deptName);
+                
+                departmentData.set(deptName, {
+                    header: deptRow,
+                    rows: deptRows,
+                    total: deptTotalRow
+                });
+            });
+            
+            // Xóa tất cả rows hiện tại
+            tbody.innerHTML = '';
+            
+            // Thêm lại theo thứ tự đã sắp xếp
+            departmentData.forEach((data, deptName) => {
+                // Thêm department header
+                tbody.appendChild(data.header);
+                
+                // Thêm các dòng dữ liệu nếu department đang mở rộng
+                if (expandedDepts.has(deptName)) {
+                    data.rows.forEach(row => tbody.appendChild(row));
+                    if (data.total) tbody.appendChild(data.total);
+                }
+            });
+        }
+
+        // thiết lập sắp xếp bảng
+        function setupTableSorting() {
+            const headers = document.querySelectorAll('#tableHeader th');
+            
+            headers.forEach(header => {
+                // Chỉ làm sortable cho các cột không phải là hành động
+                if (!header.classList.contains('no-sort')) {
+                    header.classList.add('sortable');
+                    
+                    header.addEventListener('click', () => {
+                        // Reset sorting trên các cột khác
+                        headers.forEach(h => {
+                            if (h !== header) {
+                                h.classList.remove('sort-asc', 'sort-desc');
+                            }
+                        });
+                        
+                        // Xác định hướng sắp xếp
+                        if (header === currentSortColumn) {
+                            // Đảo ngược hướng sắp xếp
+                            currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+                        } else {
+                            // Sắp xếp mới
+                            currentSortColumn = header;
+                            currentSortDirection = 'asc';
+                        }
+                        
+                        // Cập nhật class hiển thị
+                        header.classList.remove('sort-asc', 'sort-desc');
+                        header.classList.add(`sort-${currentSortDirection}`);
+                        
+                        // Thực hiện sắp xếp
+                        sortTableData();
+                    });
+                }
+            });
+        }
+
+        // Tải bảng theo bộ phận
+        function loadGroupedTableData() {
+            const tbody = document.getElementById('mainTableBody');
+            tbody.innerHTML = '';
+
+            // Update header
+            const header = document.getElementById('tableHeader');
+            header.innerHTML = `
+                <tr>
+                    <th class="sortable">Tháng</th>
+                    <th class="sortable">Ngân sách tháng</th>
+                    <th class="sortable">Đã sử dụng</th>
+                    <th class="sortable">% Tháng</th>
+                    <th class="sortable">Còn lại (Tháng)</th>
+                    <th class="sortable">Ngân sách năm</th>
+                    <th class="sortable">% Năm</th>
+                    <th class="sortable">Luỹ kế</th>
+                    <th class="sortable">% Luỹ kế</th>
+                    <th class="sortable">Còn lại(Luỹ kế)</th>
+                </tr>
+            `;
+
+            Object.entries(allDepartments).forEach(([deptName, deptData]) => {
+                const isExpanded = expandedDepts.has(deptName);
+                
+                // Department header row
+                const deptRow = document.createElement('tr');
+                deptRow.className = 'department-row';
+                deptRow.setAttribute('data-dept', deptName);
+                deptRow.onclick = () => toggleDepartment(deptName);
+                deptRow.innerHTML = `
+                    <td colspan="10">
+                        <span class="toggle-icon ${isExpanded ? '' : 'collapsed'}">▼</span>
+                        <strong>Bộ phận: ${deptName}</strong>
+                    </td>
+                `;
+                tbody.appendChild(deptRow);
+
+                if (isExpanded) {
+                    // Filter data by year/month
+                    const filteredData = filterDataByYearMonth(deptData);
+                    
+                    // Data rows
+                    let totalNganSach = 0;
+                    let totalDaSuDung = 0;
+                    let totalConLai = 0;
+
+                    filteredData.forEach(row => {
+                        const tr = document.createElement('tr');
+                        tr.className = 'data-row';
+                        tr.setAttribute('data-dept', deptName);
+                        tr.setAttribute('data-month', row.thang);
+                        const conLaiClass = row.con_lai_thang < 0 ? 'negative-value' : '';
+                        
+                        tr.innerHTML = `
+                            <td class="month-cell">${formatMonth(row.thang)}</td>
+                            <td class="number-format">${formatCurrency(row.ngan_sach_thang)}</td>
+                            <td class="number-format">${formatCurrency(row.da_su_dung)}</td>
+                            <td class="percent-format">${row.phan_tram_thang.toFixed(2)}%</td>
+                            <td class="number-format ${conLaiClass}">${formatCurrency(row.con_lai_thang)}</td>
+                            <td class="number-format">${formatCurrency(row.ngan_sach_nam)}</td>
+                            <td class="percent-format">${row.phan_tram_nam.toFixed(0)}%</td>
+                            <td class="number-format">${formatCurrency(row.luy_ke)}</td>
+                            <td class="percent-format">${row.phan_tram_luy_ke.toFixed(0)}%</td>
+                            <td class="number-format">${formatCurrency(row.con_lai_luy_ke)}</td>
+                        `;
+                        tbody.appendChild(tr);
+                        
+                        totalNganSach += row.ngan_sach_thang || 0;
+                        totalDaSuDung += row.da_su_dung || 0;
+                        totalConLai += row.con_lai_thang || 0;
+                    });
+
+                    // Total row for department
+                    if (filteredData.length > 0) {
+                        const totalRow = document.createElement('tr');
+                        totalRow.className = 'total-row data-row';
+                        totalRow.setAttribute('data-dept', deptName);
+                        totalRow.innerHTML = `
+                            <td><strong>Tổng</strong></td>
+                            <td class="number-format"><strong>${formatCurrency(totalNganSach)}</strong></td>
+                            <td class="number-format"><strong>${formatCurrency(totalDaSuDung)}</strong></td>
+                            <td></td>
+                            <td class="number-format"><strong>${formatCurrency(totalConLai)}</strong></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        `;
+                        tbody.appendChild(totalRow);
+                    }
+                }
+            });
+            
+            // Setup sorting sau khi load data
+            setupTableSorting();
+            applyFilters();
+        }
+
+        // Tải bảng không theo bộ phận
+        function loadUngroupedTableData() {
+            const tbody = document.getElementById('mainTableBody');
+            tbody.innerHTML = '';
+
+            // Update header
+            const header = document.getElementById('tableHeader');
+            header.innerHTML = `
+                <tr>
+                    <th class="sortable">Bộ phận</th>
+                    <th class="sortable">Tháng</th>
+                    <th class="sortable">Ngân sách tháng</th>
+                    <th class="sortable">Đã sử dụng</th>
+                    <th class="sortable">% Tháng</th>
+                    <th class="sortable">Còn lại (Tháng)</th>
+                    <th class="sortable">Ngân sách năm</th>
+                    <th class="sortable">% Năm</th>
+                    <th class="sortable">Luỹ kế</th>
+                    <th class="sortable">% Luỹ kế</th>
+                    <th class="sortable">Còn lại(Luỹ kế)</th>
+                </tr>
+            `;
+
+            Object.entries(allDepartments).forEach(([deptName, deptData]) => {
+                const filteredData = filterDataByYearMonth(deptData);
+                
+                // Calculate totals
+                let deptTotal = { ngan_sach_thang: 0, da_su_dung: 0, con_lai_thang: 0 };
+                filteredData.forEach(r => {
+                    deptTotal.ngan_sach_thang += r.ngan_sach_thang || 0;
+                    deptTotal.da_su_dung += r.da_su_dung || 0;
+                    deptTotal.con_lai_thang += r.con_lai_thang || 0;
+                });
+                
+                filteredData.forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'data-row';
+                    tr.setAttribute('data-dept', deptName);
+                    tr.setAttribute('data-month', row.thang);
+                    const conLaiClass = row.con_lai_thang < 0 ? 'negative-value' : '';
+                    
+                    tr.innerHTML = `
+                        <td class="dept-cell">${deptName}</td>
+                        <td class="month-cell">${formatMonth(row.thang)}</td>
+                        <td class="number-format">${formatCurrency(row.ngan_sach_thang)}</td>
+                        <td class="number-format">${formatCurrency(row.da_su_dung)}</td>
+                        <td class="percent-format">${row.phan_tram_thang.toFixed(2)}%</td>
+                        <td class="number-format ${conLaiClass}">${formatCurrency(row.con_lai_thang)}</td>
+                        <td class="number-format">${formatCurrency(row.ngan_sach_nam)}</td>
+                        <td class="percent-format">${row.phan_tram_nam.toFixed(0)}%</td>
+                        <td class="number-format">${formatCurrency(row.luy_ke)}</td>
+                        <td class="percent-format">${row.phan_tram_luy_ke.toFixed(0)}%</td>
+                        <td class="number-format">${formatCurrency(row.con_lai_luy_ke)}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+                
+                // Add total row for department
+                if (filteredData.length > 0) {
+                    const totalRow = document.createElement('tr');
+                    totalRow.className = 'total-row data-row';
+                    totalRow.setAttribute('data-dept', deptName);
+                    totalRow.innerHTML = `
+                        <td class="dept-cell"><strong>${deptName}</strong></td>
+                        <td class="month-cell"><strong>Tổng</strong></td>
+                        <td class="number-format"><strong>${formatCurrency(deptTotal.ngan_sach_thang)}</strong></td>
+                        <td class="number-format"><strong>${formatCurrency(deptTotal.da_su_dung)}</strong></td>
+                        <td class="percent-format"></td>
+                        <td class="number-format"><strong>${formatCurrency(deptTotal.con_lai_thang)}</strong></td>
+                        <td class="number-format"></td>
+                        <td class="percent-format"></td>
+                        <td class="number-format"></td>
+                        <td class="percent-format"></td>
+                        <td class="number-format"></td>
+                    `;
+                    tbody.appendChild(totalRow);
+                }
+            });
+            
+            // Setup sorting sau khi load data
+            setupTableSorting();
+            applyFilters();
+        }
+
+        // chuyển đổi kiểu hiển thị bảng
+        function loadCombinedTableData() {
+            if (isGroupedByDept) {
+                loadGroupedTableData();
+            } else {
+                loadUngroupedTableData();
+            }
+        }
+
+        // Áp dụng bộ lọc tìm kiếm và bộ phận
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+            const selectedDept = document.getElementById('deptFilterSelect').value;
+            const rows = document.querySelectorAll('#mainTableBody tr');
+            
+            // Tập hợp các bộ phận có dòng khớp với tìm kiếm
+            const matchingDepartments = new Set();
+            
+            rows.forEach(row => {
+                if (row.classList.contains('department-row')) return;
+                
+                const text = row.textContent.toLowerCase();
+                const deptName = row.getAttribute('data-dept');
+                
+                let matchSearch = searchTerm === '' || text.includes(searchTerm);
+                let matchDept = !selectedDept || deptName === selectedDept;
+                
+                if (matchSearch && matchDept) {
+                    matchingDepartments.add(deptName);
+                }
+            });
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                const deptName = row.getAttribute('data-dept');
+                
+                let matchSearch = searchTerm === '' || text.includes(searchTerm);
+                let matchDept = !selectedDept || deptName === selectedDept;
+                
+                if (isGroupedByDept && row.classList.contains('department-row')) {
+                    
+                    if (searchTerm === '') {
+                        row.style.display = '';
+                    } else {
+                        if (matchingDepartments.has(deptName)) {
+                            row.style.display = '';
+                            if (!expandedDepts.has(deptName)) {
+                                expandedDepts.add(deptName);
+                                setTimeout(() => loadCombinedTableData(), 0);
+                            }
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    }
+                } else if (isGroupedByDept && (row.classList.contains('data-row') || row.classList.contains('total-row'))) {
+                    
+                    if (searchTerm === '') {
+                        row.style.display = expandedDepts.has(deptName) && matchDept ? '' : 'none';
+                    } else {
+                        row.style.display = matchSearch && matchDept && matchingDepartments.has(deptName) ? '' : 'none';
+                    }
+                } else {
+                    row.style.display = matchSearch && matchDept ? '' : 'none';
+                }
+            });
+        }
+
+        // chuyển đổi loại biểu đồ
+        function switchChartMode(mode) {
+            chartMode = mode;
+            const chartContainer = document.getElementById('chartContainer');
+            const compactBtn = document.getElementById('compactModeBtn');
+            const scrollBtn = document.getElementById('scrollModeBtn');
+            
+            compactBtn.classList.toggle('active', mode === 'compact');
+            scrollBtn.classList.toggle('active', mode === 'scroll');
+            
+            if (mode === 'compact') {
+                chartContainer.className = 'chart-mode-compact';
+            } else {
+                chartContainer.className = 'chart-mode-scrollable';
+                const canvas = document.getElementById('mainChart');
+                if (canvas) {
+                    let canvasWrapper = chartContainer.querySelector('.chart-canvas-scrollable');
+                    if (!canvasWrapper) {
+                        canvasWrapper = document.createElement('div');
+                        canvasWrapper.className = 'chart-canvas-scrollable';
+                        chartContainer.innerHTML = '';
+                        canvasWrapper.appendChild(canvas);
+                        chartContainer.appendChild(canvasWrapper);
+                    }
+                }
+            }
+            
+            const currentDept = document.getElementById('departmentSelect').value;
+            if (currentDept) {
+                createChart(currentDept);
+            }
+        }
+
+        // Tạo biểu đồ đường
+        function createChart(deptName) {
+            const ctx = document.getElementById('mainChart');
+            if (!ctx) return;
+
+            const data = allDepartments[deptName];
+            if (!data) return;
+
+            if (currentChart) {
+                currentChart.destroy();
+            }
+
+            let filteredData = data;
+            if (selectedYear) {
+                filteredData = data.filter(row => row.thang.startsWith(selectedYear));
+            }
+            
+            if (filteredData.length === 0) {
+                currentChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Không có dữ liệu'],
+                        datasets: [{
+                            label: 'Không có dữ liệu',
+                            data: [0],
+                            borderColor: '#cccccc',
+                            backgroundColor: 'rgba(204, 204, 204, 0.1)',
+                            borderWidth: 1,
+                            pointRadius: 0,
+                            fill: false
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                enabled: false
+                            },
+                            datalabels: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                display: false
+                            },
+                            x: {
+                                display: true,
+                                ticks: {
+                                    font: {
+                                        size: 14,
+                                        weight: 'bold'
+                                    },
+                                    callback: function() {
+                                        return selectedYear ? 'Không có dữ liệu cho năm ' + selectedYear : 'Không có dữ liệu';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                return;
+            }
+
+            const labels = filteredData.map(d => formatMonth(d.thang));
+            const nganSachData = filteredData.map(d => d.ngan_sach_thang);
+            const daSuDungData = filteredData.map(d => d.da_su_dung);
+            const conLaiData = filteredData.map(d => d.con_lai_thang);
+
+            const isCompactMode = chartMode === 'compact';
+            
+            currentChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Ngân sách tháng',
+                            data: nganSachData,
+                            borderColor: '#4a6fa5',
+                            backgroundColor: 'rgba(74, 111, 165, 0.2)',
+                            tension: 0.4,
+                            fill: true,
+                            pointRadius: isCompactMode ? 3 : 6,
+                            pointHoverRadius: isCompactMode ? 5 : 8,
+                            borderWidth: isCompactMode ? 2 : 3,
+                            pointBackgroundColor: '#4a6fa5',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: isCompactMode ? 1 : 2,
+                            pointStyle: 'circle'
+                        },
+                        {
+                            label: 'Đã sử dụng trong tháng',
+                            data: daSuDungData,
+                            borderColor: '#e74c3c',
+                            backgroundColor: 'rgba(231, 76, 60, 0.2)',
+                            tension: 0.4,
+                            fill: true,
+                            pointRadius: isCompactMode ? 3 : 6,
+                            pointHoverRadius: isCompactMode ? 5 : 8,
+                            borderWidth: isCompactMode ? 2 : 3,
+                            pointBackgroundColor: '#e74c3c',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: isCompactMode ? 1 : 2,
+                            pointStyle: 'rect'
+                        },
+                        {
+                            label: 'Còn lại',
+                            data: conLaiData,
+                            borderColor: '#ff9800',
+                            backgroundColor: 'transparent',
+                            tension: 0.4,
+                            fill: false,
+                            pointRadius: isCompactMode ? 2 : 5,
+                            pointHoverRadius: isCompactMode ? 4 : 7,
+                            borderWidth: isCompactMode ? 1.5 : 2.5,
+                            pointBackgroundColor: '#ff9800',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: isCompactMode ? 1 : 1.5,
+                            pointStyle: 'triangle'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        datalabels: {
+                            display: function(context) {
+                                return context.datasetIndex !== 2 && !isCompactMode;
+                            },
+                            color: function(context) {
+                                return 'white';
+                            },
+                            backgroundColor: function(context) {
+                                return context.dataset.borderColor;
+                            },
+                            borderRadius: 4,
+                            font: {
+                                weight: 'bold',
+                                size: isCompactMode ? 0 : 10
+                            },
+                            padding: {
+                                top: 3,
+                                bottom: 3,
+                                left: 5,
+                                right: 5
+                            },
+                            align: function(context) {
+                                const datasetIndex = context.datasetIndex;
+                                const value = context.dataset.data[context.dataIndex];
+                                
+                                if (datasetIndex === 0) {
+                                    return 'top';
+                                } else if (datasetIndex === 1) {
+                                    return 'bottom';
+                                }
+                                return 'top';
+                            },
+                            offset: function(context) {
+                                const datasetIndex = context.datasetIndex;
+                                
+                                if (datasetIndex === 0) {
+                                    return 10;
+                                } else if (datasetIndex === 1) {
+                                    return -10;
+                                }
+                                return 0;
+                            },
+                            formatter: function(value, context) {
+                                if (value === 0 || value === null || value === undefined) {
+                                    return '0';
+                                }
+                                
+                                return new Intl.NumberFormat('vi-VN').format(value) + ' VND';
+                            },
+                            clip: false,
+                            textAlign: 'center',
+                            textStrokeColor: 'rgba(0,0,0,0.3)',
+                            textStrokeWidth: 1
+                        },
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: {
+                                font: {
+                                    size: isCompactMode ? 10 : 11
+                                },
+                                padding: isCompactMode ? 10 : 15,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            backgroundColor: 'rgba(0, 0, 0, 0.85)',
+                            padding: isCompactMode ? 8 : 12,
+                            titleFont: {
+                                size: isCompactMode ? 11 : 12
+                            },
+                            bodyFont: {
+                                size: isCompactMode ? 10 : 11
+                            },
+                            callbacks: {
+                                label: function(context) {
+                                    // Format số tiền có dấu phân cách
+                    const value = context.parsed.y || context.parsed;
+                    const formattedValue = new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND'
+                    }).format(value);
+                    
+                    // Hoặc đơn giản hơn:
+                    // const formattedValue = value.toLocaleString('vi-VN') + ' VND';
+                    
+                    return `${context.dataset.label}: ${formattedValue}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            stacked: false,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: isCompactMode ? 9 : 10
+                                },
+                                callback: function(value) {
+                                    if (value >= 1000000000) {
+                                        return (value / 1000000000).toFixed(1) + 'B';
+                                    } else if (value >= 1000000) {
+                                        return (value / 1000000).toFixed(1) + 'M';
+                                    } else if (value >= 1000) {
+                                        return (value / 1000).toFixed(1) + 'K';
+                                    }
+                                    return value;
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false,
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: isCompactMode ? 9 : 10
+                                },
+                                maxRotation: isCompactMode ? 45 : 0,
+                                minRotation: isCompactMode ? 45 : 0
+                            }
+                        }
+                    },
+                    layout: {
+                        padding: {
+                            top: isCompactMode ? 10 : 30,
+                            bottom: isCompactMode ? 15 : 40,
+                            left: isCompactMode ? 5 : 20,
+                            right: isCompactMode ? 5 : 20
+                        }
+                    }
+                },
+                plugins: [ChartDataLabels]
+            });
+        }
+
+        // Khởi tạo trang
+        document.addEventListener('DOMContentLoaded', function() {
+            // Chỉ khởi tạo nếu allDepartments đã được khai báo
+            if (typeof allDepartments !== 'undefined' && Object.keys(allDepartments).length > 0) {
+                // mặc định tự động mở rộng tất cả dữ liệu
+                Object.keys(allDepartments).forEach(deptName => {
+                    expandedDepts.add(deptName);
+                });
+
+                loadCombinedTableData();
+
+                // selector
+                const departmentSelect = document.getElementById('departmentSelect');
+                const deptFilterSelect = document.getElementById('deptFilterSelect');
+                
+                Object.keys(allDepartments).forEach((deptName, index) => {
+                    // selector biểu đồ
+                    const option1 = document.createElement('option');
+                    option1.value = deptName;
+                    option1.textContent = deptName;
+                    if (index === 0) option1.selected = true;
+                    departmentSelect.appendChild(option1);
+                    
+                    // selector lọc
+                    const option2 = document.createElement('option');
+                    option2.value = deptName;
+                    option2.textContent = deptName;
+                    deptFilterSelect.appendChild(option2);
+                });
+
+                // tạo biểu đồ ban đầu
+                createChart(departmentSelect.value);
+            }
+
+            //  thay dổi selector biểu đồ theo bộ phận
+            document.getElementById('departmentSelect').addEventListener('change', function() {
+                createChart(this.value);
+            });
+
+            // checkbox nhóm bộ phận
+            document.getElementById('groupByDeptCheck').addEventListener('change', function() {
+                isGroupedByDept = this.checked;
+                // reset
+                expandedDepts.clear();
+                if (isGroupedByDept) {
+                    // tự dộng mở rộng tất cả bộ phận
+                    if (typeof allDepartments !== 'undefined') {
+                        Object.keys(allDepartments).forEach(deptName => {
+                            expandedDepts.add(deptName);
+                        });
+                    }
+                }
+                loadCombinedTableData();
+            });
+
+            // Bộ lọc bộ phận
+            document.getElementById('deptFilterSelect').addEventListener('change', function() {
+                applyFilters();
+            });
+
+            // selector năm
+            document.getElementById('yearSelect').addEventListener('change', function() {
+                selectedYear = this.value;
+                if (typeof allDepartments !== 'undefined') {
+                    loadCombinedTableData();
+                    createChart(document.getElementById('departmentSelect').value);
+                }
+            });
+            
+            // chọn tháng
+            monthPickerInstance = flatpickr("#monthPicker", {
+                locale: "vn",
+                dateFormat: "Y-m",
+                defaultDate: null,
+                theme: "material_blue",
+                onChange: function(selectedDates, dateStr) {
+                    if (dateStr) {
+                        // Có chọn tháng
+                        selectedMonth = dateStr;
+                        // Tắt checkbox "Tất cả các tháng"
+                        document.getElementById('allMonthsCheck').checked = false;
+                        if (typeof allDepartments !== 'undefined') {
+                            loadCombinedTableData();
+                            createChart(document.getElementById('departmentSelect').value);
+                        }
+                    } else {
+                        // Hủy chọn (clear)
+                        selectedMonth = '';
+                        // Tự động bật lại checkbox "Tất cả các tháng"
+                        document.getElementById('allMonthsCheck').checked = true;
+                        if (typeof allDepartments !== 'undefined') {
+                            loadCombinedTableData();
+                            createChart(document.getElementById('departmentSelect').value);
+                        }
+                    }
+                },
+                onOpen: function() {
+                    // Khi mở date picker, tắt checkbox "Tất cả các tháng" tạm thời
+                    document.getElementById('allMonthsCheck').checked = false;
+                },
+                onClose: function() {
+                    // Nếu sau khi đóng mà không chọn tháng nào, bật lại checkbox
+                    if (!selectedMonth) {
+                        document.getElementById('allMonthsCheck').checked = true;
+                    }
+                }
+            });
+            
+            // checkbox tất cả các tháng
+            document.getElementById('allMonthsCheck').addEventListener('change', function() {
+                if (this.checked) {
+                    // Khi chọn "Tất cả các tháng"
+                    selectedMonth = '';
+                    // Xóa chọn trong date picker
+                    if (monthPickerInstance) {
+                        monthPickerInstance.clear();
+                    }
+                    if (typeof allDepartments !== 'undefined') {
+                        loadCombinedTableData();
+                        createChart(document.getElementById('departmentSelect').value);
+                    }
+                } else {
+                    // Khi bỏ chọn "Tất cả các tháng"
+                    // Mở date picker để người dùng chọn tháng
+                    if (monthPickerInstance) {
+                        monthPickerInstance.open();
+                    }
+                }
+            });
+
+            // Chuyển đổi chế độ biểu đồ
+            document.getElementById('compactModeBtn').addEventListener('click', function() {
+                switchChartMode('compact');
+            });
+            
+            document.getElementById('scrollModeBtn').addEventListener('click', function() {
+                switchChartMode('scroll');
+            });
+
+            // Tìm kiếm theo từ khoá
+            document.getElementById('searchInput').addEventListener('keyup', function() {
+                applyFilters();
+            });
+            
+            // Reset filter khi ô tìm kiếm trống
+            document.getElementById('searchInput').addEventListener('input', function() {
+                if (this.value === '') {
+                    applyFilters();
+                }
+            });
+            
+            // Xử lý resize để biểu đồ tự động điều chỉnh kích thước
+            let resizeTimer;
+            window.addEventListener('resize', function() {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function() {
+                    if (currentChart) {
+                        currentChart.resize();
+                    }
+                }, 300);
+            });
+        });
+    </script>
+</body>
+</html>

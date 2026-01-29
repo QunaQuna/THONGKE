@@ -1,0 +1,1953 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard Ngân Sách VAS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Bootstrap -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- DataTables -->
+<link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.bootstrap5.min.css" />
+
+<!-- Flatpickr -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css" />
+
+<style>
+    body{
+    background: linear-gradient(135deg, 
+        #e3f2fd 0%,     
+        #f3e5f5 25%,    /* Màu tím nhạt */
+        #e8f5e9 50%,    /* Màu xanh lá nhạt */
+        #fff3e0 75%,    /* Màu cam nhạt */
+        #e0f7fa 100%    /* Màu xanh ngọc nhạt */
+    );
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    font-size: 14px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow-x: hidden;
+}
+.dashboard{
+    padding:15px;
+}
+
+.filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.9) 0%, 
+        rgba(255, 255, 255, 0.8) 100%
+    );
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    box-shadow: 
+        0 8px 32px rgba(31, 38, 135, 0.1),
+        0 4px 16px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    animation: slideInDown 0.6s ease-out;
+}
+
+@keyframes shimmerBorder {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.filter-bar label{
+    font-weight:600;
+    margin-right:4px;
+    color: #2c3e50;
+}
+.card-box{
+    background:#fff;
+    border: none;
+    border-radius: 12px;
+    padding:15px;
+    height:100%;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.);
+    transition: all 0.3s ease;
+    border: 1px solid #eef2f7;
+}
+.card-box:hover {
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+}
+.left-panel{
+    flex: 0 0 40%;
+    max-width: 40%;
+}
+.right-panel{
+    flex: 0 0 calc(60% - 15px);
+    max-width: calc(60% - 15px);
+}
+.left-panel,
+.right-panel{
+    display: flex;
+    flex-direction: column;
+}
+.main-content{
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    width: 100%;
+}
+
+/* Chart container */
+.chart-wrap{
+    position: relative;
+    height: 400px;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 25px;
+    background: linear-gradient(to bottom right, #ffffff, #f8f9fa);
+    border-radius: 10px;
+    overflow: hidden !important;
+    contain: strict;
+}
+
+.chart-canvas-wrapper{
+    position: relative;
+    width: 280px;
+    height: 280px;
+}
+
+#budgetChart{
+    position: absolute;
+    top: 0;
+    left: 0;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+}
+
+.chart-title{
+    font-weight:700;
+    font-size:16px;
+    margin-bottom:15px;
+    text-align:center;
+    color:#2c3e50;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #eaeaea;
+}
+
+/* SVG for connector lines */
+#connectorSvg{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+}
+
+/* Chart labels */
+.chart-label{
+    position: absolute;
+    background: rgba(255, 255, 255, 0.98);
+    border: 1.5px solid;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 9px !important;
+    font-weight: 600;
+    white-space: nowrap;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+    z-index: 20;
+    pointer-events: auto;
+    line-height: 1.1;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+    min-width: 110px !important;
+    max-width: 130px !important;
+    cursor: pointer;
+    overflow: visible;
+    text-overflow: ellipsis;
+}
+
+.chart-label .dept-name{
+    display: block;
+    font-weight: 700;
+    font-size: 9px !important;
+    margin-bottom: 1px;
+    line-height: 1;
+}
+
+.chart-label .dept-pct{
+    display: block;
+    font-size: 9px !important;
+    margin-top: 1px;
+    line-height: 1;
+}
+
+.chart-label:hover {
+    transform: scale(1.1);
+    z-index: 20;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+
+/* Bảng trái */
+.table-scroll{
+    max-height:280px;
+    overflow:auto;
+    border-radius: 8px;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+}
+
+#tableLeft{
+    font-size: 12px;
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100% !important;
+}
+
+#tableLeft th{
+    padding: 10px 8px;
+    font-size: 12px;
+    background: linear-gradient(to bottom, #4a6fa5, #3a5985);
+    color: white;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border: none;
+    font-weight: 600;
+    text-align: center;
+}
+
+#tableLeft th:first-child {
+    border-top-left-radius: 8px;
+}
+
+#tableLeft th:last-child {
+    border-top-right-radius: 8px;
+}
+
+#tableLeft td{
+    padding: 8px 8px;
+    border-bottom: 1px solid #eef2f7;
+    transition: all 0.2s ease;
+    font-size: 12px;
+}
+
+#tableLeft tbody tr {
+    transition: all 0.2s ease;
+}
+
+#tableLeft tbody tr:hover {
+    background-color: rgba(74, 111, 165, 0.08);
+    transform: translateX(3px);
+}
+
+#tableLeft td:nth-child(1){
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+#tableLeft td:nth-child(2){
+    text-align: right;
+    min-width: 100px;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace !important;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+#tableLeft td:nth-child(3){
+    text-align: center;
+    min-width: 70px;
+}
+
+#refreshBtn {
+    background: linear-gradient(135deg, 
+        #0d6efd 0%, 
+        #6610f2 100%
+    );
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    box-shadow: 
+        0 4px 15px rgba(13, 110, 253, 0.4),
+        0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+#refreshBtn:hover {
+    transform: translateY(-3px) rotate(5deg);
+    box-shadow: 
+        0 8px 25px rgba(13, 110, 253, 0.6),
+        0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.chart-title {
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 16px;
+    text-align: center;
+    color: #2c3e50;
+    padding-bottom: 10px;
+    border-bottom: 2px solid rgba(93, 156, 236, 0.1);
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(90deg, 
+        #2c3e50 0%, 
+        #4a6fa5 50%, 
+        #2c3e50 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    background-size: 200% 100%;
+    animation: titleShimmer 3s linear infinite;
+}
+
+@keyframes titleShimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.btn-detail:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(102, 126, 234, 0.5);
+    color: white;
+    text-decoration: none;
+}
+
+.btn-detail:active {
+    transform: translateY(0);
+}
+
+.btn-detail {
+    padding: 6px 14px;
+    font-size: 11px;
+    background: linear-gradient(135deg, 
+        #667eea 0%, 
+        #764ba2 100%
+    );
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 600;
+    box-shadow: 
+        0 4px 15px rgba(102, 126, 234, 0.4),
+        0 2px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-full-detail {
+    padding: 8px 16px;
+    font-size: 12px;
+    background: linear-gradient(135deg, 
+        #4CAF50 0%, 
+        #2E7D32 100%
+    );
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 600;
+    box-shadow: 
+        0 4px 15px rgba(76, 175, 80, 0.4),
+        0 2px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-full-detail:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(76, 175, 80, 0.5);
+    color: white;
+    text-decoration: none;
+}
+
+/* Right table - Đồng bộ với left panel */
+.right-table-container {
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: 600px;
+    position: relative;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* Override DataTables styles */
+table.dataTable {
+    font-size: 12px !important;
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100% !important;
+}
+
+table.dataTable thead th {
+    background: linear-gradient(to bottom, #4a6fa5, #3a5985) !important;
+    color: white !important;
+    font-weight: 600 !important;
+    font-size: 12px !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    border: none !important;
+    padding: 10px 8px !important;
+    text-align: center !important;
+}
+
+table.dataTable thead th:first-child {
+    border-top-left-radius: 8px !important;
+}
+
+table.dataTable thead th:last-child {
+    border-top-right-radius: 8px !important;
+}
+
+table.dataTable tbody td {
+    font-size: 12px !important;
+    padding: 8px 8px !important;
+    border-bottom: 1px solid #eef2f7 !important;
+    transition: all 0.2s ease !important;
+    cursor: pointer;
+}
+
+table.dataTable tbody tr {
+    transition: all 0.2s ease !important;
+}
+
+table.dataTable tbody tr:hover {
+    background-color: rgba(74, 111, 165, 0.08) !important;
+    transform: translateX(3px) !important;
+}
+
+/* Đồng bộ font-family Consolas cho tất cả các cột số */
+table.dataTable tbody td:nth-child(3), /* Đã dùng */
+table.dataTable tbody td:nth-child(4), /* NS tháng */
+table.dataTable tbody td:nth-child(5), /* Còn lại */
+table.dataTable tbody td:nth-child(7), /* Ngân sách năm */
+.dataTable td.text-end {
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace !important;
+    font-weight: 600 !important;
+}
+
+/* Các cột phần trăm giữ font mặc định */
+table.dataTable tbody td:nth-child(6),
+table.dataTable tbody td:nth-child(8) {
+    font-family: inherit !important;
+}
+
+/* Style cho các cột cụ thể */
+table.dataTable tbody td:nth-child(1) {
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 500 !important;
+}
+
+table.dataTable tbody td:nth-child(2) {
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+table.dataTable tbody td.text-end {
+    text-align: right !important;
+    min-width: 100px;
+    color: #2c3e50 !important;
+}
+
+.dataTables_filter {
+    display: none !important;
+}
+
+div.dt-search {
+    display: none !important;
+}
+
+.text-end{
+    text-align:right !important;
+}
+
+/* Row highlight when clicked */
+.row-highlight {
+    background-color: rgba(255, 193, 7, 0.15) !important;
+    font-weight: 700 !important;
+    position: relative;
+}
+
+.row-highlight::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 2px solid #ffc107;
+    pointer-events: none;
+    border-radius: 4px;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.7; }
+    50% { opacity: 1; }
+    100% { opacity: 0.7; }
+}
+
+@keyframes gradientBG {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Scrollbar styling */
+.table-scroll::-webkit-scrollbar,
+.right-table-container::-webkit-scrollbar{
+    width: 10px;
+    height: 10px;
+}
+
+.table-scroll::-webkit-scrollbar-track,
+.right-table-container::-webkit-scrollbar-track{
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.table-scroll::-webkit-scrollbar-thumb,
+.right-table-container::-webkit-scrollbar-thumb{
+    background: linear-gradient(to bottom, #a1c4fd, #c2e9fb);
+    border-radius: 10px;
+    border: 2px solid #f1f1f1;
+}
+
+.table-scroll::-webkit-scrollbar-thumb:hover,
+.right-table-container::-webkit-scrollbar-thumb:hover{
+    background: linear-gradient(to bottom, #7bb4fd, #a8d8f9);
+}
+
+/* Form controls styling */
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    padding: 6px 12px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+    transform: translateY(-1px);
+}
+
+.form-control-sm {
+    padding: 4px 10px;
+    font-size: 13px;
+}
+
+/* Checkbox styling */
+.form-check-input:checked {
+    background-color: #667eea;
+    border-color: #667eea;
+}
+
+.form-check-input:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+    .dashboard{
+        padding:8px;
+    }
+    
+    .filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+    
+    .filter-bar > div {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+    }
+    
+    .filter-bar label {
+        flex: 0 0 80px;
+    }
+    
+    #monthPicker, #yearSelect, #allMonthsBtn, #refreshBtn {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .chart-wrap {
+        height: 320px !important;
+        min-height: 320px !important;
+        padding: 10px;
+    }
+    
+    .chart-canvas-wrapper {
+        width: 200px !important;
+        height: 200px !important;
+    }
+    
+    .chart-label {
+        min-width: 60px !important;
+        max-width: 80px !important;
+        font-size: 7px !important;
+        padding: 3px 6px !important;
+    }
+    
+    .center-text-container {
+        width: 80px;
+    }
+    
+    .center-total-label {
+        font-size: 10px !important;
+    }
+    
+    .center-total-value {
+        font-size: 12px !important;
+    }
+    
+    .right-table-container {
+        max-height: 350px;
+    }
+    
+    table.dataTable thead th,
+    table.dataTable tbody td {
+        font-size: 10px;
+        padding: 4px 4px;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 992px) {
+    .main-content{
+        flex-direction: column;
+    }
+    
+    .chart-wrap {
+        height: 380px !important;
+        min-height: 380px !important;
+    }
+    
+    .chart-canvas-wrapper {
+        width: 220px !important;
+        height: 220px !important;
+    }
+}
+
+@media (min-width: 993px) {
+    .main-content{
+        flex-direction: row;
+    }
+    .left-panel{
+        flex: 0 0 40%;
+        max-width: 40%;
+    }
+    .right-panel{
+        flex: 0 0 calc(60% - 12px);
+        max-width: calc(60% - 12px);
+    }
+    
+    .chart-wrap {
+        height: 400px !important;
+        min-height: 400px !important;
+    }
+    
+    .chart-canvas-wrapper {
+        width: 280px !important;
+        height: 280px !important;
+    }
+    
+    .chart-label {
+        min-width: 110px !important;
+        max-width: 130px !important;
+        font-size: 9px !important;
+        padding: 5px 10px !important;
+    }
+}
+@media (max-width: 992px) {
+    .main-content{
+        flex-direction: column;
+    }
+    .left-panel, .right-panel{
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    
+    .chart-wrap {
+        height: 400px;
+        min-height: 400px;
+        padding: 15px;
+    }
+    
+    .chart-canvas-wrapper {
+        width: 200px;
+        height: 200px;
+    }
+    
+    .chart-label {
+        min-width: 90px !important;
+        max-width: 110px !important;
+        font-size: 8px !important;
+        padding: 4px 8px;
+    }
+}
+
+/* Modal styling */
+.modal-header {
+    background: linear-gradient(to right, #667eea, #764ba2);
+    color: white;
+}
+
+.modal-title {
+    font-weight: 600;
+}
+
+/* Modal footer buttons */
+.modal-footer .btn {
+    min-width: 80px;
+}
+</style>
+</head>
+
+<body>
+<div class="dashboard">
+
+    <div class="filter-bar">
+        <label>Chọn năm</label>
+        <select id="yearSelect" class="form-select form-select-sm" style="width:110px">
+            <option value="2026">2026</option>
+            <option value="2025">2025</option>
+            <option value="2024">2024</option>
+        </select>
+
+        <label>Chọn tháng</label>
+        <input type="text" id="monthPicker" class="form-control form-control-sm" style="width:150px" placeholder="Chọn tháng">
+        
+        <button type="button" class="btn btn-sm btn-outline-secondary" id="allMonthsBtn">Tất cả tháng</button>
+        
+        <div class="ms-auto">
+            <button id="refreshBtn" class="btn btn-sm btn-outline-primary">
+                Làm mới
+            </button>
+        </div>
+    </div>
+
+    <div class="main-content">
+
+        <div class="left-panel">
+            <div class="card-box mb-3">
+                <div class="chart-title">THỐNG KÊ TỔNG NGÂN SÁCH CÁC PHÒNG BAN</div>
+                <div class="chart-wrap" id="chartContainer">
+                    <svg id="connectorSvg"></svg>
+                    <div class="chart-canvas-wrapper">
+                        <canvas id="budgetChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-box">
+                <input type="text" class="form-control form-control-sm mb-2" placeholder="Tìm kiếm bộ phận..." id="searchLeft">
+                <div class="table-scroll">
+                    <table id="tableLeft" class="table table-hover table-sm">
+                        <thead>
+                            <tr>
+                                <th>Bộ phận</th>
+                                <th>Tổng NS</th>
+                                <th>Chi tiết</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="card-box h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="groupCheckbox">
+                        <label class="form-check-label" for="groupCheckbox">Nhóm bộ phận</label>
+                    </div>
+                    <input type="text" id="searchRight" class="form-control form-control-sm" style="width:220px" placeholder="Tìm kiếm trong bảng...">
+                </div>
+
+                <div class="right-table-container">
+                    <table id="tableRight" class="table table-hover table-sm nowrap" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Bộ phận</th>
+                                <th>Nhóm ngân sách</th>
+                                <th class="text-end">Đã dùng</th>
+                                <th class="text-end" id="monthColumn">NS tháng 202601</th>
+                                <th class="text-end">Còn lại</th>
+                                <th>%/tháng</th>
+                                <th class="text-end">Ngân sách năm</th>
+                                <th>%/năm</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- JS -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/2.3.4/js/dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/2.3.4/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<script>
+    function formatNumber(num) {
+    if (!num || num === 0) return '0';
+    return Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+//Định dạng số thành %
+function formatPercent(num) {
+    if (!num || num === 0) return '0%';
+    return num.toFixed(1) + '%';
+}
+
+// Rút gọn tên bộ phận cho hiển thị biểu đồ
+function shortenDeptName(name) {
+    if (!name) return '';
+    let shortName = name.replace('NSIP ', '');
+    shortName = shortName.replace('Phòng ', 'P.');
+    shortName = shortName.replace('công nghệ thông tin', 'CNTT');
+    shortName = shortName.replace('PHÒNG ', 'P.');
+    shortName = shortName.replace('XƯỞNG CƠ ĐIỆN', 'Xưởng CĐ');
+    shortName = shortName.replace('ĐỘI TÀU LAI DẮT', 'Đội Tàu');
+    
+    if (shortName.length > 18) {
+        return shortName.substring(0, 18) + '...';
+    }
+    return shortName;
+}
+
+// màu sắc chú thích
+const CHART_COLORS = [
+    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', 
+    '#9966FF', '#FF9F40', '#FF6B6B', '#4ECDC4',
+    '#A28BFF', '#5BC8AF', '#F5A623', '#D0021B',
+    '#8B572A', '#417505', '#BD10E0', '#4A90E2'
+];
+
+// Biến toàn cục để lưu dữ liệu hiện tại
+let currentMonth = '01';
+let currentYear = '2026';
+let currentDeptData = [];
+let currentDetailData = [];
+
+// Dữ liệu mẫu 
+const ALL_DATA = {
+    "detailData": {
+        "2026": {
+            "01": [
+                {
+                    "Bộ phận": "NSIP Phòng TC-KT",
+                    "Nhóm ngân sách": "1116-Chi phí thuê tài sản",
+                    "Đã dùng": 0,
+                    "NS tháng": 43421151892,
+                    "Còn lại": 523584961827,
+                    "%/tháng": 0,
+                    "Ngân sách năm": 523584961827,
+                    "%/năm": 0
+                },
+                {
+                    "Bộ phận": "NSIP Phòng TC-KT",
+                    "Nhóm ngân sách": "2010-Chi phí lãi vay",
+                    "Đã dùng": 0,
+                    "NS tháng": 76890667,
+                    "Còn lại": 685403977,
+                    "%/tháng": 0,
+                    "Ngân sách năm": 685403977,
+                    "%/năm": 0
+                },
+                {
+                    "Bộ phận": "NSIP HCNS",
+                    "Nhóm ngân sách": "1010-Lương cơ bản",
+                    "Đã dùng": 0,
+                    "NS tháng": 15489893713,
+                    "Còn lại": 133971631342,
+                    "%/tháng": 0,
+                    "Ngân sách năm": 133971631342,
+                    "%/năm": 0
+                },
+                {
+                    "Bộ phận": "NSIP HCNS",
+                    "Nhóm ngân sách": "1020-Phụ cấp",
+                    "Đã dùng": 0,
+                    "NS tháng": 10399298802,
+                    "Còn lại": 133971631342,
+                    "%/tháng": 0,
+                    "Ngân sách năm": 133971631342,
+                    "%/năm": 0
+                },
+                {
+                    "Bộ phận": "NSIP Xưởng Cơ Điện",
+                    "Nhóm ngân sách": "1510-Chi phí vật tư",
+                    "Đã dùng": 1612684757,
+                    "NS tháng": 1958000000,
+                    "Còn lại": 42712926456,
+                    "%/tháng": 82.4,
+                    "Ngân sách năm": 44325611213,
+                    "%/năm": 3.6
+                }
+            ],
+            "02": [
+                {
+                    "Bộ phận": "NSIP Phòng TC-KT",
+                    "Nhóm ngân sách": "1116-Chi phí thuê tài sản",
+                    "Đã dùng": 1000000000,
+                    "NS tháng": 44000000000,
+                    "Còn lại": 529000000000,
+                    "%/tháng": 2.3,
+                    "Ngân sách năm": 530000000000,
+                    "%/năm": 0.2
+                },
+                {
+                    "Bộ phận": "NSIP Xưởng Cơ Điện",
+                    "Nhóm ngân sách": "1520-Chi phí sửa chữa",
+                    "Đã dùng": 1292831466,
+                    "NS tháng": 1072000000,
+                    "Còn lại": 41420094989,
+                    "%/tháng": 120.6,
+                    "Ngân sách năm": 44325611213,
+                    "%/năm": 2.9
+                },
+                {
+                    "Bộ phận": "NSIP Phòng Kinh Doanh",
+                    "Nhóm ngân sách": "3010-Chi phí marketing",
+                    "Đã dùng": 500000000,
+                    "NS tháng": 1000000000,
+                    "Còn lại": 24500000000,
+                    "%/tháng": 50.0,
+                    "Ngân sách năm": 25000000000,
+                    "%/năm": 2.0
+                }
+            ],
+            "03": [
+                {
+                    "Bộ phận": "NSIP Phòng Kỹ Thuật",
+                    "Nhóm ngân sách": "4010-Chi phí nghiên cứu",
+                    "Đã dùng": 2000000000,
+                    "NS tháng": 5000000000,
+                    "Còn lại": 13000000000,
+                    "%/tháng": 40.0,
+                    "Ngân sách năm": 15000000000,
+                    "%/năm": 13.3
+                }
+            ],
+            "04": []  
+        },
+        "2025": {
+            "01": [
+                {
+                    "Bộ phận": "NSIP Phòng TC-KT",
+                    "Nhóm ngân sách": "1116-Chi phí thuê tài sản",
+                    "Đã dùng": 500000000,
+                    "NS tháng": 40000000000,
+                    "Còn lại": 500000000000,
+                    "%/tháng": 1.3,
+                    "Ngân sách năm": 510000000000,
+                    "%/năm": 0.1
+                }
+            ],
+            "02": [
+                {
+                    "Bộ phận": "NSIP Phòng TC-KT",
+                    "Nhóm ngân sách": "1116-Chi phí thuê tài sản",
+                    "Đã dùng": 1500000000,
+                    "NS tháng": 41000000000,
+                    "Còn lại": 510000000000,
+                    "%/tháng": 3.7,
+                    "Ngân sách năm": 520000000000,
+                    "%/năm": 0.3
+                }
+            ]
+        }
+    }
+};
+
+let tableLeft, budgetChart, tableRight;
+let currentHighlightedRow = null;
+
+// Flatpickr với theme material_blue
+const monthPicker = flatpickr("#monthPicker", {
+    dateFormat: "Y-m",
+    altFormat: "F Y",
+    defaultDate: "2026-01",
+    theme: "material_blue",
+    locale: {
+        months: {
+            shorthand: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
+            longhand: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12']
+        }
+    }
+});
+
+// Tính toán dữ liệu bộ phận từ detailData
+function calculateDeptDataFromDetail(detailData, useYearBudget = false) {
+    const deptMap = new Map();
+    
+    detailData.forEach(item => {
+        const deptName = item['Bộ phận'];
+        const budgetValue = useYearBudget ? item['Ngân sách năm'] : item['NS tháng'];
+        
+        if (!deptMap.has(deptName)) {
+            deptMap.set(deptName, {
+                "Bộ phận": deptName,
+                "Tổng ngân sách": 0,
+                "màu": null
+            });
+        }
+        
+        const dept = deptMap.get(deptName);
+        dept["Tổng ngân sách"] += budgetValue || 0;
+    });
+    
+    // Gán màu cho các bộ phận
+    const deptArray = Array.from(deptMap.values());
+    deptArray.forEach((dept, index) => {
+        dept.màu = CHART_COLORS[index % CHART_COLORS.length];
+    });
+    
+    return deptArray;
+}
+
+// Lấy dữ liệu theo năm và tháng
+function getDataByMonth(year, month) {
+    const yearStr = year.toString();
+    const monthStr = month ? month.toString().padStart(2, '0') : null;
+    
+    let detailData = [];
+    
+    if (monthStr) {
+        detailData = ALL_DATA.detailData[yearStr]?.[monthStr] || [];
+    } else {
+        Object.keys(ALL_DATA.detailData[yearStr] || {}).forEach(m => {
+            const monthData = ALL_DATA.detailData[yearStr][m] || [];
+            detailData = detailData.concat(monthData);
+        });
+    }
+    
+    const useYearBudget = !monthStr;
+    const deptData = calculateDeptDataFromDetail(detailData, useYearBudget);
+    
+    return {
+        deptData: deptData,
+        detailData: detailData
+    };
+}
+
+// Cập nhật tiêu đề cột tháng
+function updateMonthColumnHeader(monthYear) {
+    const monthColumn = $('#monthColumn');
+    monthColumn.text(`NS tháng ${monthYear}`);
+}
+
+// Lọc và cập nhật toàn bộ dashboard
+function filterDashboard() {
+    const year = $('#yearSelect').val();
+    const monthInput = $('#monthPicker').val();
+    
+    let monthStr = null;
+    
+    if (!monthInput || monthInput === "Tất cả tháng") {
+        currentMonth = null;
+        currentYear = year;
+        monthPicker.setDate(null, false);
+    } else {
+        const parts = monthInput.split('-');
+        currentYear = parts[0];
+        currentMonth = parts[1];
+        monthStr = currentMonth;
+    }
+    
+    const monthYear = currentMonth ? currentYear + currentMonth : currentYear;
+    updateMonthColumnHeader(monthYear);
+    
+    const filteredData = getDataByMonth(currentYear, currentMonth);
+    currentDeptData = filteredData.deptData;
+    currentDetailData = filteredData.detailData;
+    
+    console.log(`Đã lọc dữ liệu: Năm ${currentYear}, Tháng ${currentMonth || 'Tất cả'}, Số bộ phận: ${currentDeptData.length}, Số chi tiết: ${currentDetailData.length}`);
+    
+    if (currentDeptData.length > 8) {
+        const sorted = [...currentDeptData].sort((a, b) => b['Tổng ngân sách'] - a['Tổng ngân sách']);
+        const top7 = sorted.slice(0, 7);
+        const others = sorted.slice(7);
+        
+        if (others.length > 0) {
+            const otherTotal = others.reduce((sum, d) => sum + d['Tổng ngân sách'], 0);
+            top7.push({
+                "Bộ phận": "Các bộ phận khác",
+                "Tổng ngân sách": otherTotal,
+                "màu": "#CCCCCC"
+            });
+            
+            currentDeptData = top7;
+        }
+    }
+    
+    updateChart();
+    updateLeftTable();
+    updateRightTable();
+}
+
+//tính góc cho từng lát cắt biểu đồ
+function calculateSliceAngles(data, total) {
+    const angles = [];
+    let currentAngle = -Math.PI / 2;
+    
+    data.forEach((dept, index) => {
+        const sliceAngle = (dept['Tổng ngân sách'] / total) * 2 * Math.PI;
+        const angleMiddle = currentAngle + sliceAngle / 2;
+        
+        angles.push({
+            start: currentAngle,
+            middle: angleMiddle,
+            end: currentAngle + sliceAngle,
+            color: dept.màu || CHART_COLORS[index]
+        });
+        
+        currentAngle += sliceAngle;
+    });
+    
+    return angles;
+}
+
+//Cập nhật biểu đồ dạng donut 
+function updateChart() {
+    const ctx = document.getElementById('budgetChart');
+    if (!ctx) return;
+    
+    if (budgetChart) {
+        budgetChart.destroy();
+    }
+    
+    if (currentDeptData.length === 0) {
+        budgetChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Không có dữ liệu'],
+                datasets: [{
+                    data: [1],
+                    backgroundColor: ['#e0e0e0'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                cutout: '75%',
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: false }
+                }
+            },
+            plugins: [{
+                id: 'centerText',
+                beforeDraw: function(chart) {
+                    const width = chart.width;
+                    const height = chart.height;
+                    const ctx = chart.ctx;
+                    ctx.restore();
+                    
+                    ctx.font = "bold 16px Arial";
+                    ctx.textBaseline = "middle";
+                    ctx.textAlign = "center";
+                    ctx.fillStyle = "#999";
+                    
+                    const textX = width / 2;
+                    const textY = height / 2;
+                    
+                    ctx.fillText("TỔNG", textX, textY - 12);
+                    ctx.font = "bold 20px Arial";
+                    ctx.fillStyle = "#5d9cec";
+                    ctx.fillText("0", textX, textY + 12);
+                    ctx.save();
+                }
+            }]
+        });
+        
+        document.querySelectorAll('.chart-label').forEach(el => el.remove());
+        document.getElementById('connectorSvg').innerHTML = '';
+        
+        return;
+    }
+    
+    const data = currentDeptData.map(d => d['Tổng ngân sách']);
+    const labels = currentDeptData.map(d => shortenDeptName(d['Bộ phận']));
+    const backgroundColors = currentDeptData.map((d, index) => d.màu || CHART_COLORS[index]);
+    const hoverColors = currentDeptData.map((d, index) => {
+        const color = d.màu || CHART_COLORS[index];
+        return Chart.helpers.color(color).lighten(0.2).rgbString();
+    });
+    const total = data.reduce((a, b) => a + b, 0);
+    
+    budgetChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: backgroundColors,
+                hoverBackgroundColor: hoverColors,
+                borderWidth: 0,
+                hoverOffset: 15,
+                hoverBorderWidth: 0,
+                borderRadius: 4,
+                spacing: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            cutout: '75%',
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    enabled: true,
+                    backgroundColor: 'rgba(0,0,0,0.85)',
+                    padding: 15,
+                    cornerRadius: 8,
+                    displayColors: true,
+                    callbacks: {
+                        title: function(context) {
+                            return currentDeptData[context[0].dataIndex]['Bộ phận'];
+                        },
+                        label: function(context) {
+                            const value = formatNumber(context.parsed);
+                            const percentage = total > 0 ? ((context.parsed / total) * 100).toFixed(2) : '0';
+                            return [
+                                'Ngân sách: ' + value,
+                                'Tỷ lệ: ' + percentage + '%'
+                            ];
+                        }
+                    }
+                }
+            },
+            animation: {
+                animateRotate: true,
+                animateScale: true,
+                duration: 1500,
+                easing: 'easeOutQuart',
+                onComplete: createChartLabels
+            },
+            hover: {
+                animationDuration: 300
+            }
+        },
+        plugins: [{
+            id: 'centerText',
+            beforeDraw: function(chart) {
+                const width = chart.width;
+                const height = chart.height;
+                const ctx = chart.ctx;
+                ctx.restore();
+                
+                ctx.font = "bold 18px 'Segoe UI', Arial, sans-serif";
+                ctx.textBaseline = "middle";
+                ctx.textAlign = "center";
+                ctx.fillStyle = "#2c3e50";
+                
+                const totalText = formatNumber(total);
+                const textX = width / 2;
+                const textY = height / 2;
+                
+                ctx.fillText("TỔNG", textX, textY - 15);
+                ctx.font = "bold 22px 'Segoe UI', Arial, sans-serif";
+                ctx.fillStyle = "#5d9cec";
+                ctx.fillText(totalText, textX, textY + 15);
+                
+                ctx.save();
+            }
+        }]
+    });
+    
+    setTimeout(createChartLabels, 100);
+}
+
+//Chú thích và các đường kết nối
+function createChartLabels() {
+    const container = document.getElementById('chartContainer');
+    const svg = document.getElementById('connectorSvg');
+    
+    container.querySelectorAll('.chart-label').forEach(el => el.remove());
+    svg.innerHTML = '';
+    
+    if (currentDeptData.length === 0) {
+        const message = document.createElement('div');
+        message.className = 'text-center text-muted';
+        message.style.position = 'absolute';
+        message.style.top = '50%';
+        message.style.left = '50%';
+        message.style.transform = 'translate(-50%, -50%)';
+        message.textContent = 'Không có dữ liệu';
+        container.appendChild(message);
+        return;
+    }
+    
+    const total = currentDeptData.reduce((sum, d) => sum + d['Tổng ngân sách'], 0);
+    const sliceAngles = calculateSliceAngles(currentDeptData, total);
+    
+    const containerWidth = container.offsetWidth;
+    const containerHeight = container.offsetHeight;
+    const chartCenter = {
+        x: containerWidth / 2,
+        y: containerHeight / 2
+    };
+    
+    const chartRadius = 100;
+    const doughnutWidth = chartRadius * 0.75; 
+    
+    currentDeptData.forEach((dept, index) => {
+        const sliceAngle = sliceAngles[index];
+        if (!sliceAngle) return;
+        
+        const shortName = shortenDeptName(dept['Bộ phận']);
+        const percentage = total > 0 ? ((dept['Tổng ngân sách'] / total) * 100).toFixed(1) : '0';
+        const color = dept.màu || CHART_COLORS[index];
+        
+        const innerRadius = chartRadius - doughnutWidth; 
+        const middleRadius = chartRadius + (doughnutWidth * 0.25); 
+        
+        const chartPointX = chartCenter.x + Math.cos(sliceAngle.middle) * middleRadius;
+        const chartPointY = chartCenter.y + Math.sin(sliceAngle.middle) * middleRadius;
+        
+        const angle = sliceAngle.middle;
+        let labelX, labelY;
+        let labelAlign = '';
+        let labelConnectorX, labelConnectorY;
+        
+        const labelPadding = 20;
+        const minDistance = middleRadius + 80; 
+        
+        labelX = chartCenter.x + Math.cos(angle) * minDistance;
+        labelY = chartCenter.y + Math.sin(angle) * minDistance;
+        
+        const label = document.createElement('div');
+        label.className = 'chart-label';
+        label.style.borderColor = color;
+        label.style.color = color;
+        label.style.boxShadow = `0 4px 12px ${color}40`;
+        label.style.zIndex = '20';
+        label.style.opacity = '0'; 
+        
+        label.innerHTML = `
+            <span class="dept-name">${shortName}</span>
+            <span class="dept-pct"><strong>${percentage}%</strong></span>
+        `;
+        
+        container.appendChild(label);
+        
+        const labelWidth = label.offsetWidth;
+        const labelHeight = label.offsetHeight;
+        
+        const cosAngle = Math.cos(angle);
+        const sinAngle = Math.sin(angle);
+        
+        if (Math.abs(cosAngle) > Math.abs(sinAngle)) {
+            // Gần trục ngang
+            if (cosAngle > 0) {
+                // Bên phải - label nằm bên phải chart
+                labelAlign = 'right';
+                labelX = containerWidth - labelWidth - labelPadding;
+                labelConnectorX = labelX;
+                labelConnectorY = labelY;
+            } else {
+                // Bên trái - label nằm bên trái chart
+                labelAlign = 'left';
+                labelX = labelPadding;
+                labelConnectorX = labelX + labelWidth;
+                labelConnectorY = labelY;
+            }
+        } else {
+            // Gần trục dọc
+            if (sinAngle > 0) {
+                // Phía dưới - label nằm dưới chart
+                labelAlign = 'bottom';
+                labelY = containerHeight - labelHeight - labelPadding;
+                labelConnectorX = labelX + labelWidth / 2;
+                labelConnectorY = labelY;
+            } else {
+                // Phía trên - label nằm trên chart
+                labelAlign = 'top';
+                labelY = labelPadding;
+                labelConnectorX = labelX + labelWidth / 2;
+                labelConnectorY = labelY + labelHeight;
+            }
+        }
+        
+        const chartLeft = chartCenter.x - chartRadius - 20;
+        const chartRight = chartCenter.x + chartRadius + 20;
+        const chartTop = chartCenter.y - chartRadius - 20;
+        const chartBottom = chartCenter.y + chartRadius + 20;
+        
+        const labelLeft = labelX;
+        const labelRight = labelX + labelWidth;
+        const labelTop = labelY;
+        const labelBottom = labelY + labelHeight;
+        
+        const isOverlapping = 
+            labelRight > chartLeft && 
+            labelLeft < chartRight && 
+            labelBottom > chartTop && 
+            labelTop < chartBottom;
+        
+        if (isOverlapping) {
+            // Đẩy label ra xa hơn
+            if (labelAlign === 'right') {
+                labelX = containerWidth - labelWidth - labelPadding - 50;
+                labelConnectorX = labelX;
+            } else if (labelAlign === 'left') {
+                labelX = labelPadding + 50;
+                labelConnectorX = labelX + labelWidth;
+            } else if (labelAlign === 'bottom') {
+                labelY = containerHeight - labelHeight - labelPadding - 50;
+                labelConnectorY = labelY;
+            } else if (labelAlign === 'top') {
+                labelY = labelPadding + 50;
+                labelConnectorY = labelY + labelHeight;
+            }
+        }
+        
+        // Cập nhật vị trí label
+        label.style.left = `${labelX}px`;
+        label.style.top = `${labelY}px`;
+        label.style.opacity = '1';
+        
+        // ĐIỀU CHỈNH LẠI ĐIỂM KẾT NỐI TRÊN LABEL SAU KHI ĐÃ CÓ VỊ TRÍ CUỐI
+        if (labelAlign === 'right') {
+            labelConnectorX = labelX;
+            labelConnectorY = labelY + labelHeight / 2;
+        } else if (labelAlign === 'left') {
+            labelConnectorX = labelX + labelWidth;
+            labelConnectorY = labelY + labelHeight / 2;
+        } else if (labelAlign === 'bottom') {
+            labelConnectorX = labelX + labelWidth / 2;
+            labelConnectorY = labelY;
+        } else if (labelAlign === 'top') {
+            labelConnectorX = labelX + labelWidth / 2;
+            labelConnectorY = labelY + labelHeight;
+        }
+        
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', labelConnectorX);
+        line.setAttribute('y1', labelConnectorY);
+        line.setAttribute('x2', chartPointX);
+        line.setAttribute('y2', chartPointY);
+        line.setAttribute('stroke', color);
+        line.setAttribute('stroke-width', '2');
+        line.setAttribute('opacity', '0.7');
+        line.setAttribute('stroke-dasharray', '4,2');
+        
+        svg.appendChild(line);
+        
+        const chartDot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        chartDot.setAttribute('cx', chartPointX);
+        chartDot.setAttribute('cy', chartPointY);
+        chartDot.setAttribute('r', '4');
+        chartDot.setAttribute('fill', color);
+        chartDot.setAttribute('stroke', '#fff');
+        chartDot.setAttribute('stroke-width', '1.5');
+        
+        svg.appendChild(chartDot);
+        
+        const labelDot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        labelDot.setAttribute('cx', labelConnectorX);
+        labelDot.setAttribute('cy', labelConnectorY);
+        labelDot.setAttribute('r', '3');
+        labelDot.setAttribute('fill', color);
+        labelDot.setAttribute('opacity', '0.8');
+        
+        svg.appendChild(labelDot);
+    });
+}
+
+// Cập nhật bảng bên trái
+function updateLeftTable() {
+    const tbody = $('#tableLeft tbody');
+    tbody.empty();
+    
+    if (currentDeptData.length === 0) {
+        tbody.append(`
+            <tr>
+                <td colspan="3" class="text-center text-muted">Không có dữ liệu</td>
+            </tr>
+        `);
+        
+        if (tableLeft) {
+            tableLeft.clear();
+            tableLeft.rows.add($('#tableLeft tbody tr'));
+            tableLeft.draw();
+        }
+        return;
+    }
+    
+    const sortedData = [...currentDeptData].sort((a, b) => b['Tổng ngân sách'] - a['Tổng ngân sách']);
+    
+    sortedData.forEach((row, index) => {
+        const deptName = row['Bộ phận'];
+        const color = row.màu || CHART_COLORS[index];
+        
+        tbody.append(`
+            <tr>
+                <td title="${deptName}">
+                    <span style="display:inline-block; width:10px; height:10px; background:${color}; border-radius:50%; margin-right:5px;"></span>
+                    ${deptName}
+                </td>
+                <td class="text-end">${formatNumber(row['Tổng ngân sách'])}</td>
+                <td>
+                    <button class="btn-detail view-detail" data-dept="${encodeURIComponent(deptName)}">
+                        Xem
+                    </button>
+                </td>
+            </tr>
+        `);
+    });
+    
+    if (tableLeft) {
+        tableLeft.clear();
+        tableLeft.rows.add($('#tableLeft tbody tr'));
+        tableLeft.draw();
+    }
+    
+    $('.view-detail').off('click').on('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const deptName = decodeURIComponent($(this).data('dept'));
+        const dept = currentDeptData.find(d => d['Bộ phận'] === deptName);
+        const deptDetails = currentDetailData.filter(d => d['Bộ phận'] === deptName);
+        
+        if (!dept) return;
+        
+        const modalHtml = `
+            <div class="modal fade" id="deptModal" tabindex="-1">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">${deptName}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h6 class="card-title">Tổng ngân sách</h6>
+                                            <div class="display-6 text-primary">${formatNumber(dept['Tổng ngân sách'])}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h6 class="card-title">Số nhóm ngân sách</h6>
+                                            <div class="display-6 text-success">${deptDetails.length}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <h6>Chi tiết nhóm ngân sách (${currentYear}-${currentMonth || 'Tất cả'})</h6>
+                            <div class="table-responsive">
+                                <table class="table table-sm table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Nhóm ngân sách</th>
+                                            <th class="text-end">Đã dùng</th>
+                                            <th class="text-end">${currentMonth ? 'NS tháng' : 'NS năm'}</th>
+                                            <th>${currentMonth ? '%/tháng' : '%/năm'}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${deptDetails.length > 0 ? deptDetails.map(d => `
+                                            <tr>
+                                                <td>${d['Nhóm ngân sách']}</td>
+                                                <td class="text-end">${formatNumber(d['Đã dùng'])}</td>
+                                                <td class="text-end">${formatNumber(currentMonth ? d['NS tháng'] : d['Ngân sách năm'])}</td>
+                                                <td>${formatPercent(currentMonth ? d['%/tháng'] : d['%/năm'])}</td>
+                                            </tr>
+                                        `).join('') : `
+                                            <tr>
+                                                <td colspan="4" class="text-center text-muted">Không có dữ liệu chi tiết</td>
+                                            </tr>
+                                        `}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                            <button type="button" class="btn btn-success btn-full-detail" id="viewFullDetail">
+                                <i class="bi bi-arrow-right"></i> Xem chi tiết đầy đủ
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        $('#deptModal').remove();
+        $('body').append(modalHtml);
+        
+        const modal = new bootstrap.Modal(document.getElementById('deptModal'));
+        modal.show();
+        
+        // Thêm sự kiện cho nút xem chi tiết đầy đủ
+        $('#viewFullDetail').off('click').on('click', function() {
+            const params = new URLSearchParams({
+                dept: deptName,
+                year: currentYear,
+                month: currentMonth || 'all'
+            });
+            window.open(`detail-page.html?${params.toString()}`, '_blank');
+        });
+    });
+}
+
+// Khởi tạo dữ liệu bảng cho bảng phải
+function initRightTable() {
+    if (tableRight) {
+        tableRight.destroy();
+        $('#tableRight').empty();
+    }
+    
+    const tableHtml = `
+        <table id="tableRight" class="table table-hover table-sm nowrap" style="width:100%">
+            <thead>
+                <tr>
+                    <th style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;">Bộ phận</th>
+                    <th style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;">Nhóm ngân sách</th>
+                    <th class="text-end" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;">Đã dùng</th>
+                    <th class="text-end" id="monthColumn" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;">${currentMonth ? 'NS tháng' : 'NS năm'} ${currentYear}${currentMonth || ''}</th>
+                    <th class="text-end" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;">Còn lại</th>
+                    <th style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;">${currentMonth ? '%/tháng' : '%/năm'}</th>
+                    <th class="text-end" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;">${currentMonth ? 'Ngân sách năm' : 'Tổng năm'}</th>
+                    <th style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;">${currentMonth ? '%/năm' : 'Tỷ lệ'}</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    `;
+    
+    $('.right-table-container').html(tableHtml);
+    
+    const table = $('#tableRight').DataTable({
+        paging: false,
+        info: false,
+        searching: false,
+        ordering: true,
+        scrollX: true,
+        scrollY: '400px',
+        scrollCollapse: true,
+        columnDefs: [
+            { 
+                targets: [2, 3, 4, 6], 
+                className: 'text-end'
+            },
+            { 
+                targets: [0], 
+                className: 'dept-column'
+            },
+            { 
+                targets: [1], 
+                className: 'budget-group-column'
+            }
+        ],
+        language: {
+            emptyTable: "Không có dữ liệu",
+            zeroRecords: "Không tìm thấy kết quả phù hợp"
+        }
+    });
+    
+    return table;
+}
+
+// Cập nhật bảng bên phải
+function updateRightTable() {
+    tableRight = initRightTable();
+    
+    if (currentDetailData.length === 0) {
+        tableRight.clear();
+        tableRight.draw();
+        return;
+    }
+    
+    const groupByDept = $('#groupCheckbox').is(':checked');
+    const rows = [];
+    
+    if (groupByDept) {
+        const groupedData = {};
+        currentDetailData.forEach(row => {
+            if (!groupedData[row['Bộ phận']]) {
+                groupedData[row['Bộ phận']] = {
+                    "Bộ phận": row['Bộ phận'],
+                    "Nhóm ngân sách": `${row['Bộ phận']} (Tổng)`,
+                    "Đã dùng": 0,
+                    "NS tháng": 0,
+                    "Còn lại": 0,
+                    "Ngân sách năm": 0,
+                    "%/tháng": 0,
+                    "%/năm": 0
+                };
+            }
+            
+            groupedData[row['Bộ phận']]["Đã dùng"] += row['Đã dùng'] || 0;
+            groupedData[row['Bộ phận']]["NS tháng"] += row['NS tháng'] || 0;
+            groupedData[row['Bộ phận']]["Còn lại"] += row['Còn lại'] || 0;
+            groupedData[row['Bộ phận']]["Ngân sách năm"] += row['Ngân sách năm'] || 0;
+        });
+        
+        Object.values(groupedData).forEach(row => {
+            if (row["NS tháng"] > 0) {
+                row["%/tháng"] = (row["Đã dùng"] / row["NS tháng"] * 100);
+            }
+            if (row["Ngân sách năm"] > 0) {
+                row["%/năm"] = (row["Đã dùng"] / row["Ngân sách năm"] * 100);
+            }
+            
+            rows.push([
+                `<strong style="font-family: 'Consolas', monospace !important;">${row['Bộ phận']}</strong>`,
+                `<strong style="font-family: 'Consolas', monospace !important;">${row['Nhóm ngân sách']}</strong>`,
+                `<strong style="font-family: 'Consolas', monospace !important;">${formatNumber(row['Đã dùng'])}</strong>`,
+                `<strong style="font-family: 'Consolas', monospace !important;">${formatNumber(currentMonth ? row['NS tháng'] : row['Ngân sách năm'])}</strong>`,
+                `<strong style="font-family: 'Consolas', monospace !important;">${formatNumber(row['Còn lại'])}</strong>`,
+                `<strong style="font-family: 'Consolas', monospace !important;">${formatPercent(currentMonth ? row['%/tháng'] : row['%/năm'])}</strong>`,
+                `<strong style="font-family: 'Consolas', monospace !important;">${formatNumber(row['Ngân sách năm'])}</strong>`,
+                `<strong style="font-family: 'Consolas', monospace !important;">${formatPercent(row['%/năm'])}</strong>`
+            ]);
+            
+            currentDetailData.filter(d => d['Bộ phận'] === row['Bộ phận']).forEach(detail => {
+                rows.push([
+                    `&nbsp;&nbsp;&nbsp;${detail['Bộ phận']}`,
+                    detail['Nhóm ngân sách'],
+                    formatNumber(detail['Đã dùng']),
+                    formatNumber(currentMonth ? detail['NS tháng'] : detail['Ngân sách năm']),
+                    formatNumber(detail['Còn lại']),
+                    formatPercent(currentMonth ? detail['%/tháng'] : detail['%/năm']),
+                    formatNumber(detail['Ngân sách năm']),
+                    formatPercent(detail['%/năm'])
+                ]);
+            });
+        });
+    } else {
+        currentDetailData.forEach(row => {
+            rows.push([
+                row['Bộ phận'],
+                row['Nhóm ngân sách'],
+                formatNumber(row['Đã dùng']),
+                formatNumber(currentMonth ? row['NS tháng'] : row['Ngân sách năm']),
+                formatNumber(row['Còn lại']),
+                formatPercent(currentMonth ? row['%/tháng'] : row['%/năm']),
+                formatNumber(row['Ngân sách năm']),
+                formatPercent(row['%/năm'])
+            ]);
+        });
+    }
+    
+    if (rows.length > 0) {
+        tableRight.clear();
+        tableRight.rows.add(rows);
+        tableRight.draw();
+    } else {
+        tableRight.clear();
+        tableRight.draw();
+    }
+}
+// Highlight dòng 
+function highlightRow(rowElement) {
+    if (currentHighlightedRow) {
+        currentHighlightedRow.removeClass('row-highlight');
+    }
+    
+    $(rowElement).addClass('row-highlight');
+    currentHighlightedRow = $(rowElement);
+}
+
+// Set up toàn bộ ứng dụng
+$(document).ready(function() {
+    // Đặt năm mặc định là 2026
+    $('#yearSelect').val('2026');
+    
+    // Khởi tạo với dữ liệu mặc định
+    filterDashboard();
+    
+    // Khởi tạo bảng trái
+    tableLeft = $('#tableLeft').DataTable({
+        paging: false,
+        info: false,
+        searching: true,
+        order: [[1, 'desc']],
+        language: {
+            search: "Tìm kiếm:",
+            emptyTable: "Không có dữ liệu"
+        }
+    });
+    
+    $('#searchLeft').on('keyup', function() {
+        tableLeft.search(this.value).draw();
+    });
+    
+    // Sự kiện lọc khi chọn năm
+    $('#yearSelect').on('change', function() {
+        filterDashboard();
+    });
+    
+    // Sự kiện lọc khi chọn tháng
+    $('#monthPicker').on('change', function() {
+        filterDashboard();
+    });
+    
+    // Nút "Tất cả tháng"
+    $('#allMonthsBtn').on('click', function() {
+        monthPicker.clear();
+        monthPicker.input.value = "Tất cả tháng";
+        filterDashboard();
+    });
+    
+    // Group checkbox
+    $('#groupCheckbox').on('change', function() {
+        updateRightTable();
+    });
+    
+    // Xử lý tìm kiếm bảng phải (chỉ dùng input của chúng ta)
+    $('#searchRight').on('keyup', function() {
+        const searchValue = $(this).val().toLowerCase();
+        
+        if (tableRight) {
+            tableRight.rows().every(function() {
+                const row = this.node();
+                const rowText = row.textContent.toLowerCase();
+                $(row).toggle(rowText.includes(searchValue));
+            });
+        }
+    });
+    
+    // Handle window resize
+    let resizeTimer;
+    $(window).on('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function() {
+            if (budgetChart) {
+                budgetChart.resize();
+                
+                const container = document.getElementById('chartContainer');
+                container.querySelectorAll('.chart-label').forEach(el => el.remove());
+                document.getElementById('connectorSvg').innerHTML = '';
+                
+                setTimeout(() => {
+                    createChartLabels();
+                    
+                    setTimeout(() => {
+                        const labels = container.querySelectorAll('.chart-label');
+                        labels.forEach(label => {
+                            adjustLabelPosition(label, container);
+                        });
+                    }, 100);
+                }, 100);
+            }
+        }, 250);
+    });
+    
+    // Hover effect của chú thích
+    $(document).on('mouseenter', '.chart-label', function() {
+        const color = $(this).css('border-color');
+        $(this).css({
+            'transform': 'scale(1.15)',
+            'z-index': '100',
+            'box-shadow': `0 8px 25px ${color}60`
+        });
+    }).on('mouseleave', '.chart-label', function() {
+        $(this).css({
+            'transform': 'scale(1)',
+            'z-index': '10',
+            'box-shadow': '0 4px 12px rgba(0,0,0,0.15)'
+        });
+    });
+    
+    // Dòng highlight khi click
+    $(document).on('click', '#tableRight tbody tr', function() {
+        highlightRow(this);
+    });
+    
+    // Refresh button
+    $('#refreshBtn').on('click', function() {
+        const $btn = $(this);
+        $btn.prop('disabled', true);
+        $btn.text('Đang tải...');
+        
+        setTimeout(() => {
+            filterDashboard();
+            
+            $btn.text('Làm mới');
+            $btn.prop('disabled', false);
+        }, 800);
+    });
+    
+    // Animation
+    $('.card-box').each(function(index) {
+        $(this).css('opacity', '0').css('transform', 'translateY(20px)');
+        setTimeout(() => {
+            $(this).animate({
+                opacity: 1,
+                transform: 'translateY(0)'
+            }, 500 + (index * 100));
+        }, 300);
+    });
+});
+</script>
+</body>
+</html>
