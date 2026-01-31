@@ -747,160 +747,200 @@
             }
         }
         
-        @media (max-width: 768px) {
-            .header-bar {
-                padding: 12px 0;
-            }
-            
-            .header-bar h4 {
-                font-size: 1.2rem;
-                text-align: center;
-            }
-            
-            .control-panel, .data-table-container, .chart-container {
-                margin: 0 8px 12px 8px;
-                padding: 12px;
-                border-radius: 12px;
-            }
-            
-            .filter-group > div {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 5px;
-                width: 100%;
-            }
-            
-            .filter-group label {
-                min-width: auto;
-                font-size: 11px;
-            }
-            
-            .filter-group .form-control,
-            .filter-group .form-select {
-                font-size: 11px;
-                height: 34px;
-                width: 100%;
-            }
-            
-            .modern-checkbox-container {
-                padding: 4px 6px;
-                font-size: 11px;
-            }
-            
-            .modern-checkbox-label {
-                font-size: 11px;
-            }
-            
-            .chart-title {
-                font-size: 14px;
-            }
-            
-            .chart-mode-compact {
-                height: 250px;
-                padding: 10px;
-            }
-            
-            .chart-mode-scrollable {
-                height: 300px;
-                padding: 12px;
-            }
-            
-            .chart-canvas-scrollable {
-                min-width: 550px;
-            }
-            
-            .main-table {
-                min-width: 1000px;
-            }
-            
-            .table-controls {
-                margin-bottom: 10px;
-            }
-            
-            .chart-selector select {
-                height: 34px;
-                font-size: 11px;
-                padding: 6px 10px;
-            }
-            
-            .chart-selector label {
-                font-size: 11px;
-            }
-        }
-        
-        @media (max-width: 576px) {
-            body {
-                font-size: 12px;
-            }
-            
-            .header-bar {
-                margin-bottom: 15px;
-            }
-            
-            .control-panel, .data-table-container, .chart-container {
-                margin: 0 5px 10px 5px;
-                padding: 10px;
-                border-radius: 10px;
-            }
-            
-            .filter-group {
-                gap: 8px;
-            }
-            
-            .filter-group label {
-                font-size: 10px;
-            }
-            
-            .modern-checkbox {
-                width: 16px;
-                height: 16px;
-            }
-            
-            .modern-checkbox:checked::after {
-                font-size: 10px;
-            }
-            
-            .chart-mode-compact {
-                height: 220px;
-                padding: 8px;
-            }
-            
-            .chart-mode-scrollable {
-                height: 280px;
-                padding: 10px;
-            }
-            
-            .chart-canvas-scrollable {
-                min-width: 500px;
-            }
-            
-            .chart-title {
-                font-size: 13px;
-            }
-            
-            .main-table thead th {
-                font-size: 11px;
-                padding: 8px 6px;
-            }
-            
-            .main-table tbody td {
-                padding: 6px 4px;
-                font-size: 10px;
-            }
-            
-            .department-row td {
-                padding: 10px 6px;
-            }
-            
-            .toggle-icon {
-                font-size: 8px;
-            }
-            
-            .chart-mode-btn {
-                padding: 5px 10px;
-                font-size: 11px;
-            }
-        }
+       @media (max-width: 768px) {
+    .header-bar {
+        padding: 12px 0;
+    }
+    
+    .header-bar h4 {
+        font-size: 1.2rem;
+        text-align: center;
+    }
+    
+    .control-panel, .data-table-container, .chart-container {
+        margin: 0 8px 12px 8px;
+        padding: 12px;
+        border-radius: 12px;
+    }
+    
+    .filter-group > div {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+        width: 100%;
+    }
+    
+    .filter-group label {
+        min-width: auto;
+        font-size: 11px;
+    }
+    
+    .filter-group .form-control,
+    .filter-group .form-select {
+        font-size: 11px;
+        height: 34px;
+        width: 100%;
+    }
+    
+    .modern-checkbox-container {
+        padding: 4px 6px;
+        font-size: 11px;
+    }
+    
+    .modern-checkbox-label {
+        font-size: 11px;
+    }
+    
+    .chart-title {
+        font-size: 14px;
+    }
+    
+    /* FIX: Tăng chiều cao biểu đồ trên mobile */
+    .chart-mode-compact {
+        height: 350px !important;
+        padding: 10px;
+    }
+    
+    .chart-mode-compact canvas {
+        width: 100% !important;
+        height: 100% !important;
+    }
+    
+    .chart-mode-scrollable {
+        height: 400px !important;
+        padding: 12px;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+    
+    /* FIX: Giữ chức năng cuộn ngang */
+    .chart-canvas-scrollable {
+        min-width: 800px;  /* Khôi phục min-width để có thể cuộn */
+        width: auto;       /* Đổi thành auto */
+        height: 100%;
+    }
+    
+    .chart-canvas-scrollable canvas {
+        width: 100% !important;
+        height: 100% !important;
+    }
+    
+    .main-table {
+        min-width: 1000px;
+    }
+    
+    .table-controls {
+        margin-bottom: 10px;
+    }
+    
+    .chart-selector select {
+        height: 34px;
+        font-size: 11px;
+        padding: 6px 10px;
+    }
+    
+    .chart-selector label {
+        font-size: 11px;
+    }
+    
+    .chart-mode-toggle {
+        width: 100%;
+    }
+    
+    .chart-mode-btn {
+        flex: 1;
+    }
+}
+
+@media (max-width: 576px) {
+    body {
+        font-size: 12px;
+    }
+    
+    .header-bar {
+        margin-bottom: 15px;
+    }
+    
+    .control-panel, .data-table-container, .chart-container {
+        margin: 0 5px 10px 5px;
+        padding: 10px;
+        border-radius: 10px;
+    }
+    
+    .filter-group {
+        gap: 8px;
+    }
+    
+    .filter-group label {
+        font-size: 10px;
+    }
+    
+    .modern-checkbox {
+        width: 16px;
+        height: 16px;
+    }
+    
+    .modern-checkbox:checked::after {
+        font-size: 10px;
+    }
+    
+    /* FIX: Tăng chiều cao biểu đồ trên mobile nhỏ */
+    .chart-mode-compact {
+        height: 300px !important;
+        padding: 8px;
+    }
+    
+    .chart-mode-compact canvas {
+        width: 100% !important;
+        height: 100% !important;
+    }
+    
+    .chart-mode-scrollable {
+        height: 350px !important;
+        padding: 10px;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+    
+    /* FIX: Giữ chức năng cuộn ngang trên mobile nhỏ */
+    .chart-canvas-scrollable {
+        min-width: 700px;  /* Khôi phục min-width */
+        width: auto;       /* Đổi thành auto */
+        height: 100%;
+    }
+    
+    .chart-canvas-scrollable canvas {
+        width: 100% !important;
+        height: 100% !important;
+    }
+    
+    .chart-title {
+        font-size: 13px;
+    }
+    
+    .main-table thead th {
+        font-size: 11px;
+        padding: 8px 6px;
+    }
+    
+    .main-table tbody td {
+        padding: 6px 4px;
+        font-size: 10px;
+    }
+    
+    .department-row td {
+        padding: 10px 6px;
+    }
+    
+    .toggle-icon {
+        font-size: 8px;
+    }
+    
+    .chart-mode-btn {
+        padding: 5px 10px;
+        font-size: 11px;
+    }
+}
     </style>
 </head>
 <body>
@@ -1014,299 +1054,363 @@
         let monthPickerInstance = null;
         let chartMode = 'compact'; 
         const allDepartments = {
-            "NSIP Đội Tàu Lai": [
-                {
-                    "thang": "202501",
-                    "ngan_sach_thang": 262844477.33333334,
-                    "da_su_dung": 38268000.0,
-                    "phan_tram_thang": 14.56,
-                    "con_lai_thang": 224576477.33,
-                    "ngan_sach_nam": 0.0,
-                    "phan_tram_nam": -100.0,
-                    "luy_ke": 38268000.0,
-                    "phan_tram_luy_ke": -100.0,
-                    "con_lai_luy_ke": 0.0
-                },
-                {
-                    "thang": "202502",
-                    "ngan_sach_thang": 174842537.33333334,
-                    "da_su_dung": 3348900.0,
-                    "phan_tram_thang": 1.92,
-                    "con_lai_thang": 171493637.33,
-                    "ngan_sach_nam": 0.0,
-                    "phan_tram_nam": -100.0,
-                    "luy_ke": 41616900.0,
-                    "phan_tram_luy_ke": -100.0,
-                    "con_lai_luy_ke": 0.0
-                },
-                {
-                    "thang": "202503",
-                    "ngan_sach_thang": 225791897.33333334,
-                    "da_su_dung": 531774380.0,
-                    "phan_tram_thang": 235.52,
-                    "con_lai_thang": -305982482.67,
-                    "ngan_sach_nam": 0.0,
-                    "phan_tram_nam": -100.0,
-                    "luy_ke": 573391280.0,
-                    "phan_tram_luy_ke": -100.0,
-                    "con_lai_luy_ke": 0.0
-                },
-                {
-                    "thang": "202504",
-                    "ngan_sach_thang": 2627986577.2833333,
-                    "da_su_dung": 0.0,
-                    "phan_tram_thang": 0.0,
-                    "con_lai_thang": 2627986577.28,
-                    "ngan_sach_nam": 0.0,
-                    "phan_tram_nam": -100.0,
-                    "luy_ke": 573391280.0,
-                    "phan_tram_luy_ke": -100.0,
-                    "con_lai_luy_ke": 0.0
-                },
-                {
-                    "thang": "202505",
-                    "ngan_sach_thang": 263083417.33333334,
-                    "da_su_dung": 275676557.0,
-                    "phan_tram_thang": 104.79,
-                    "con_lai_thang": -12593139.67,
-                    "ngan_sach_nam": 0.0,
-                    "phan_tram_nam": -100.0,
-                    "luy_ke": 849067837.0,
-                    "phan_tram_luy_ke": -100.0,
-                    "con_lai_luy_ke": 0.0
-                },
-                {
-                    "thang": "202506",
-                    "ngan_sach_thang": 264553817.33333334,
-                    "da_su_dung": 0.0,
-                    "phan_tram_thang": 0.0,
-                    "con_lai_thang": 264553817.33,
-                    "ngan_sach_nam": 0.0,
-                    "phan_tram_nam": -100.0,
-                    "luy_ke": 849067837.0,
-                    "phan_tram_luy_ke": -100.0,
-                    "con_lai_luy_ke": 0.0
-                },
-                {
-                    "thang": "202507",
-                    "ngan_sach_thang": 263083417.33333334,
-                    "da_su_dung": 469710297.88,
-                    "phan_tram_thang": 178.54,
-                    "con_lai_thang": -206626880.55,
-                    "ngan_sach_nam": 0.0,
-                    "phan_tram_nam": -100.0,
-                    "luy_ke": 1318778134.88,
-                    "phan_tram_luy_ke": -100.0,
-                    "con_lai_luy_ke": 0.0
-                },
-                {
-                    "thang": "202508",
-                    "ngan_sach_thang": 257275337.33333334,
-                    "da_su_dung": 0.0,
-                    "phan_tram_thang": 0.0,
-                    "con_lai_thang": 257275337.33,
-                    "ngan_sach_nam": 0.0,
-                    "phan_tram_nam": -100.0,
-                    "luy_ke": 1318778134.88,
-                    "phan_tram_luy_ke": -100.0,
-                    "con_lai_luy_ke": 0.0
-                },
-                {
-                    "thang": "202509",
-                    "ngan_sach_thang": 264553817.33333334,
-                    "da_su_dung": 0.0,
-                    "phan_tram_thang": 0.0,
-                    "con_lai_thang": 264553817.33,
-                    "ngan_sach_nam": 0.0,
-                    "phan_tram_nam": -100.0,
-                    "luy_ke": 1318778134.88,
-                    "phan_tram_luy_ke": -100.0,
-                    "con_lai_luy_ke": 0.0
-                },
-                {
-                    "thang": "202510",
-                    "ngan_sach_thang": 2630927377.2833333,
-                    "da_su_dung": 364574984.0,
-                    "phan_tram_thang": 13.86,
-                    "con_lai_thang": 2266352393.28,
-                    "ngan_sach_nam": 0.0,
-                    "phan_tram_nam": -100.0,
-                    "luy_ke": 1683353118.88,
-                    "phan_tram_luy_ke": -100.0,
-                    "con_lai_luy_ke": 0.0
-                },
-                {
-                    "thang": "202511",
-                    "ngan_sach_thang": 266024217.33333334,
-                    "da_su_dung": 466250000.0,
-                    "phan_tram_thang": 175.27,
-                    "con_lai_thang": -200225782.67,
-                    "ngan_sach_nam": 0.0,
-                    "phan_tram_nam": -100.0,
-                    "luy_ke": 2149603118.88,
-                    "phan_tram_luy_ke": -100.0,
-                    "con_lai_luy_ke": 0.0
-                },
-                {
-                    "thang": "202512",
-                    "ngan_sach_thang": 266024217.33333334,
-                    "da_su_dung": 0.0,
-                    "phan_tram_thang": 0.0,
-                    "con_lai_thang": 266024217.33,
-                    "ngan_sach_nam": 0.0,
-                    "phan_tram_nam": -100.0,
-                    "luy_ke": 2149603118.88,
-                    "phan_tram_luy_ke": -100.0,
-                    "con_lai_luy_ke": 0.0
-                }
-            ],
-            "NSIP ĐỘI TÀU LAI DẮT": [
-                {
-                    "thang": "202601",
-                    "ngan_sach_thang": 287901805.1333333,
-                    "da_su_dung": 0.0,
-                    "phan_tram_thang": 0.0,
-                    "con_lai_thang": 287901805.13,
-                    "ngan_sach_nam": 3572350299.0,
-                    "phan_tram_nam": 0.0,
-                    "luy_ke": 0.0,
-                    "phan_tram_luy_ke": 0.0,
-                    "con_lai_luy_ke": 3572350299.0
-                },
-                {
-                    "thang": "202602",
-                    "ngan_sach_thang": 214528353.33333334,
-                    "da_su_dung": 0.0,
-                    "phan_tram_thang": 0.0,
-                    "con_lai_thang": 214528353.33,
-                    "ngan_sach_nam": 3572350299.0,
-                    "phan_tram_nam": 0.0,
-                    "luy_ke": 0.0,
-                    "phan_tram_luy_ke": 0.0,
-                    "con_lai_luy_ke": 3572350299.0
-                },
-                {
-                    "thang": "202603",
-                    "ngan_sach_thang": 278312261.3333333,
-                    "da_su_dung": 0.0,
-                    "phan_tram_thang": 0.0,
-                    "con_lai_thang": 278312261.33,
-                    "ngan_sach_nam": 3572350299.0,
-                    "phan_tram_nam": 0.0,
-                    "luy_ke": 0.0,
-                    "phan_tram_luy_ke": 0.0,
-                    "con_lai_luy_ke": 3572350299.0
-                },
-                {
-                    "thang": "202604",
-                    "ngan_sach_thang": 353034516.5333334,
-                    "da_su_dung": 0.0,
-                    "phan_tram_thang": 0.0,
-                    "con_lai_thang": 353034516.53,
-                    "ngan_sach_nam": 3572350299.0,
-                    "phan_tram_nam": 0.0,
-                    "luy_ke": 0.0,
-                    "phan_tram_luy_ke": 0.0,
-                    "con_lai_luy_ke": 3572350299.0
-                },
-                {
-                    "thang": "202605",
-                    "ngan_sach_thang": 280563950.1333333,
-                    "da_su_dung": 0.0,
-                    "phan_tram_thang": 0.0,
-                    "con_lai_thang": 280563950.13,
-                    "ngan_sach_nam": 3572350299.0,
-                    "phan_tram_nam": 0.0,
-                    "luy_ke": 0.0,
-                    "phan_tram_luy_ke": 0.0,
-                    "con_lai_luy_ke": 3572350299.0
-                },
-                {
-                    "thang": "202606",
-                    "ngan_sach_thang": 287319016.5333334,
-                    "da_su_dung": 0.0,
-                    "phan_tram_thang": 0.0,
-                    "con_lai_thang": 287319016.53,
-                    "ngan_sach_nam": 3572350299.0,
-                    "phan_tram_nam": 0.0,
-                    "luy_ke": 0.0,
-                    "phan_tram_luy_ke": 0.0,
-                    "con_lai_luy_ke": 3572350299.0
-                },
-                {
-                    "thang": "202607",
-                    "ngan_sach_thang": 287319016.5333334,
-                    "da_su_dung": 0.0,
-                    "phan_tram_thang": 0.0,
-                    "con_lai_thang": 287319016.53,
-                    "ngan_sach_nam": 3572350299.0,
-                    "phan_tram_nam": 0.0,
-                    "luy_ke": 0.0,
-                    "phan_tram_luy_ke": 0.0,
-                    "con_lai_luy_ke": 3572350299.0
-                },
-                {
-                    "thang": "202608",
-                    "ngan_sach_thang": 291822394.1333333,
-                    "da_su_dung": 0.0,
-                    "phan_tram_thang": 0.0,
-                    "con_lai_thang": 291822394.13,
-                    "ngan_sach_nam": 3572350299.0,
-                    "phan_tram_nam": 0.0,
-                    "luy_ke": 0.0,
-                    "phan_tram_luy_ke": 0.0,
-                    "con_lai_luy_ke": 3572350299.0
-                },
-                {
-                    "thang": "202609",
-                    "ngan_sach_thang": 282815638.93333334,
-                    "da_su_dung": 0.0,
-                    "phan_tram_thang": 0.0,
-                    "con_lai_thang": 282815638.93,
-                    "ngan_sach_nam": 3572350299.0,
-                    "phan_tram_nam": 0.0,
-                    "luy_ke": 0.0,
-                    "phan_tram_luy_ke": 0.0,
-                    "con_lai_luy_ke": 3572350299.0
-                },
-                {
-                    "thang": "202610",
-                    "ngan_sach_thang": 386809848.5333333,
-                    "da_su_dung": 0.0,
-                    "phan_tram_thang": 0.0,
-                    "con_lai_thang": 386809848.53,
-                    "ngan_sach_nam": 3572350299.0,
-                    "phan_tram_nam": 0.0,
-                    "luy_ke": 0.0,
-                    "phan_tram_luy_ke": 0.0,
-                    "con_lai_luy_ke": 3572350299.0
-                },
-                {
-                    "thang": "202611",
-                    "ngan_sach_thang": 307584215.73333335,
-                    "da_su_dung": 0.0,
-                    "phan_tram_thang": 0.0,
-                    "con_lai_thang": 307584215.73,
-                    "ngan_sach_nam": 3572350299.0,
-                    "phan_tram_nam": 0.0,
-                    "luy_ke": 0.0,
-                    "phan_tram_luy_ke": 0.0,
-                    "con_lai_luy_ke": 3572350299.0
-                },
-                {
-                    "thang": "202612",
-                    "ngan_sach_thang": 314339282.1333333,
-                    "da_su_dung": 0.0,
-                    "phan_tram_thang": 0.0,
-                    "con_lai_thang": 314339282.13,
-                    "ngan_sach_nam": 3572350299.0,
-                    "phan_tram_nam": 0.0,
-                    "luy_ke": 0.0,
-                    "phan_tram_luy_ke": 0.0,
-                    "con_lai_luy_ke": 3572350299.0
-                }
-            ]
-        };
+    "NSIP Đội Tàu Lai":  [
+            {
+                "thang": "202501",
+                "ngan_sach_thang": 262844477.33,
+                "da_su_dung": 38268000.0,
+                "phan_tram_thang": 14.56,
+                "con_lai_thang": 224576477.33,
+                "ngan_sach_nam": 3154133728.0,
+                "phan_tram_nam": 1.21,
+                "luy_ke": 38268000.0,
+                "phan_tram_luy_ke": 1.21,
+                "con_lai_luy_ke": 3115865728.0
+            },
+            {
+                "thang": "202502",
+                "ngan_sach_thang": 174842537.33,
+                "da_su_dung": 3348900.0,
+                "phan_tram_thang": 1.92,
+                "con_lai_thang": 171493637.33,
+                "ngan_sach_nam": 3154133728.0,
+                "phan_tram_nam": 0.11,
+                "luy_ke": 41616900.0,
+                "phan_tram_luy_ke": 1.32,
+                "con_lai_luy_ke": 3112516828.0
+            },
+            {
+                "thang": "202503",
+                "ngan_sach_thang": 225791897.33,
+                "da_su_dung": 531774380.0,
+                "phan_tram_thang": 235.52,
+                "con_lai_thang": -305982482.67,
+                "ngan_sach_nam": 3154133728.0,
+                "phan_tram_nam": 16.86,
+                "luy_ke": 573391280.0,
+                "phan_tram_luy_ke": 18.18,
+                "con_lai_luy_ke": 2580742448.0
+            },
+            {
+                "thang": "202504",
+                "ngan_sach_thang": 2627986577.28,
+                "da_su_dung": 125000000.0,
+                "phan_tram_thang": 4.76,
+                "con_lai_thang": 2502986577.28,
+                "ngan_sach_nam": 3154133728.0,
+                "phan_tram_nam": 3.96,
+                "luy_ke": 698391280.0,
+                "phan_tram_luy_ke": 22.14,
+                "con_lai_luy_ke": 2455742448.0
+            },
+            {
+                "thang": "202505",
+                "ngan_sach_thang": 263083417.33,
+                "da_su_dung": 275676557.0,
+                "phan_tram_thang": 104.79,
+                "con_lai_thang": -12593139.67,
+                "ngan_sach_nam": 3154133728.0,
+                "phan_tram_nam": 8.74,
+                "luy_ke": 974067837.0,
+                "phan_tram_luy_ke": 30.88,
+                "con_lai_luy_ke": 2180065891.0
+            },
+            {
+                "thang": "202506",
+                "ngan_sach_thang": 264553817.33,
+                "da_su_dung": 185000000.0,
+                "phan_tram_thang": 69.94,
+                "con_lai_thang": 79553817.33,
+                "ngan_sach_nam": 3154133728.0,
+                "phan_tram_nam": 5.86,
+                "luy_ke": 1159067837.0,
+                "phan_tram_luy_ke": 36.74,
+                "con_lai_luy_ke": 1995065891.0
+            },
+            {
+                "thang": "202507",
+                "ngan_sach_thang": 263083417.33,
+                "da_su_dung": 469710297.88,
+                "phan_tram_thang": 178.54,
+                "con_lai_thang": -206626880.55,
+                "ngan_sach_nam": 3154133728.0,
+                "phan_tram_nam": 14.89,
+                "luy_ke": 1628778134.88,
+                "phan_tram_luy_ke": 51.63,
+                "con_lai_luy_ke": 1525355593.12
+            },
+            {
+                "thang": "202508",
+                "ngan_sach_thang": 257275337.33,
+                "da_su_dung": 85000000.0,
+                "phan_tram_thang": 33.04,
+                "con_lai_thang": 172275337.33,
+                "ngan_sach_nam": 3154133728.0,
+                "phan_tram_nam": 2.69,
+                "luy_ke": 1713778134.88,
+                "phan_tram_luy_ke": 54.32,
+                "con_lai_luy_ke": 1440355593.12
+            },
+            {
+                "thang": "202509",
+                "ngan_sach_thang": 264553817.33,
+                "da_su_dung": 265000000.0,
+                "phan_tram_thang": 100.17,
+                "con_lai_thang": -446182.67,
+                "ngan_sach_nam": 3154133728.0,
+                "phan_tram_nam": 8.40,
+                "luy_ke": 1978778134.88,
+                "phan_tram_luy_ke": 62.72,
+                "con_lai_luy_ke": 1175355593.12
+            },
+            {
+                "thang": "202510",
+                "ngan_sach_thang": 2630927377.28,
+                "da_su_dung": 364574984.0,
+                "phan_tram_thang": 13.86,
+                "con_lai_thang": 2266352393.28,
+                "ngan_sach_nam": 3154133728.0,
+                "phan_tram_nam": 11.56,
+                "luy_ke": 2343353118.88,
+                "phan_tram_luy_ke": 74.28,
+                "con_lai_luy_ke": 810780609.12
+            },
+            {
+                "thang": "202511",
+                "ngan_sach_thang": 266024217.33,
+                "da_su_dung": 466250000.0,
+                "phan_tram_thang": 175.27,
+                "con_lai_thang": -200225782.67,
+                "ngan_sach_nam": 3154133728.0,
+                "phan_tram_nam": 14.78,
+                "luy_ke": 2809603118.88,
+                "phan_tram_luy_ke": 89.06,
+                "con_lai_luy_ke": 344530609.12
+            },
+            {
+                "thang": "202512",
+                "ngan_sach_thang": 266024217.33,
+                "da_su_dung": 344530609.12,
+                "phan_tram_thang": 129.51,
+                "con_lai_thang": -78506391.79,
+                "ngan_sach_nam": 3154133728.0,
+                "phan_tram_nam": 10.92,
+                "luy_ke": 3154133728.0,
+                "phan_tram_luy_ke": 100.00,
+                "con_lai_luy_ke": 0.0
+            }
+        ],
+    "NSIP Đội Tàu Lai Dắt": [
+            {
+                "thang": "202601",
+                "ngan_sach_thang": 287901805.13,
+                "da_su_dung": 12500000.0,
+                "phan_tram_thang": 4.34,
+                "con_lai_thang": 275401805.13,
+                "ngan_sach_nam": 3572350299.0,
+                "phan_tram_nam": 0.35,
+                "luy_ke": 12500000.0,
+                "phan_tram_luy_ke": 0.35,
+                "con_lai_luy_ke": 3559850299.0
+            },
+            {
+                "thang": "202602",
+                "ngan_sach_thang": 214528353.33,
+                "da_su_dung": 85000000.0,
+                "phan_tram_thang": 39.62,
+                "con_lai_thang": 129528353.33,
+                "ngan_sach_nam": 3572350299.0,
+                "phan_tram_nam": 2.38,
+                "luy_ke": 97500000.0,
+                "phan_tram_luy_ke": 2.73,
+                "con_lai_luy_ke": 3474850299.0
+            },
+            {
+                "thang": "202603",
+                "ngan_sach_thang": 278312261.33,
+                "da_su_dung": 195000000.0,
+                "phan_tram_thang": 70.06,
+                "con_lai_thang": 83312261.33,
+                "ngan_sach_nam": 3572350299.0,
+                "phan_tram_nam": 5.46,
+                "luy_ke": 292500000.0,
+                "phan_tram_luy_ke": 8.19,
+                "con_lai_luy_ke": 3279850299.0
+            },
+            {
+                "thang": "202604",
+                "ngan_sach_thang": 353034516.53,
+                "da_su_dung": 285000000.0,
+                "phan_tram_thang": 80.73,
+                "con_lai_thang": 68034516.53,
+                "ngan_sach_nam": 3572350299.0,
+                "phan_tram_nam": 7.98,
+                "luy_ke": 577500000.0,
+                "phan_tram_luy_ke": 16.17,
+                "con_lai_luy_ke": 2994850299.0
+            },
+            {
+                "thang": "202605",
+                "ngan_sach_thang": 280563950.13,
+                "da_su_dung": 320000000.0,
+                "phan_tram_thang": 114.06,
+                "con_lai_thang": -39436049.87,
+                "ngan_sach_nam": 3572350299.0,
+                "phan_tram_nam": 8.96,
+                "luy_ke": 897500000.0,
+                "phan_tram_luy_ke": 25.13,
+                "con_lai_luy_ke": 2674850299.0
+            },
+            {
+                "thang": "202606",
+                "ngan_sach_thang": 287319016.53,
+                "da_su_dung": 185000000.0,
+                "phan_tram_thang": 64.39,
+                "con_lai_thang": 102319016.53,
+                "ngan_sach_nam": 3572350299.0,
+                "phan_tram_nam": 5.18,
+                "luy_ke": 1082500000.0,
+                "phan_tram_luy_ke": 30.31,
+                "con_lai_luy_ke": 2489850299.0
+            },
+            {
+                "thang": "202607",
+                "ngan_sach_thang": 287319016.53,
+                "da_su_dung": 0.0,
+                "phan_tram_thang": 0.0,
+                "con_lai_thang": 287319016.53,
+                "ngan_sach_nam": 3572350299.0,
+                "phan_tram_nam": 0.0,
+                "luy_ke": 1082500000.0,
+                "phan_tram_luy_ke": 30.31,
+                "con_lai_luy_ke": 2489850299.0
+            },
+            {
+                "thang": "202608",
+                "ngan_sach_thang": 291822394.13,
+                "da_su_dung": 150000000.0,
+                "phan_tram_thang": 51.39,
+                "con_lai_thang": 141822394.13,
+                "ngan_sach_nam": 3572350299.0,
+                "phan_tram_nam": 4.20,
+                "luy_ke": 1232500000.0,
+                "phan_tram_luy_ke": 34.51,
+                "con_lai_luy_ke": 2339850299.0
+            },
+            {
+                "thang": "202609",
+                "ngan_sach_thang": 282815638.93,
+                "da_su_dung": 225000000.0,
+                "phan_tram_thang": 79.56,
+                "con_lai_thang": 57815638.93,
+                "ngan_sach_nam": 3572350299.0,
+                "phan_tram_nam": 6.30,
+                "luy_ke": 1457500000.0,
+                "phan_tram_luy_ke": 40.81,
+                "con_lai_luy_ke": 2114850299.0
+            },
+            {
+                "thang": "202610",
+                "ngan_sach_thang": 386809848.53,
+                "da_su_dung": 0.0,
+                "phan_tram_thang": 0.0,
+                "con_lai_thang": 386809848.53,
+                "ngan_sach_nam": 3572350299.0,
+                "phan_tram_nam": 0.0,
+                "luy_ke": 1457500000.0,
+                "phan_tram_luy_ke": 40.81,
+                "con_lai_luy_ke": 2114850299.0
+            },
+            {
+                "thang": "202611",
+                "ngan_sach_thang": 307584215.73,
+                "da_su_dung": 0.0,
+                "phan_tram_thang": 0.0,
+                "con_lai_thang": 307584215.73,
+                "ngan_sach_nam": 3572350299.0,
+                "phan_tram_nam": 0.0,
+                "luy_ke": 1457500000.0,
+                "phan_tram_luy_ke": 40.81,
+                "con_lai_luy_ke": 2114850299.0
+            },
+            {
+                "thang": "202612",
+                "ngan_sach_thang": 314339282.13,
+                "da_su_dung": 0.0,
+                "phan_tram_thang": 0.0,
+                "con_lai_thang": 314339282.13,
+                "ngan_sach_nam": 3572350299.0,
+                "phan_tram_nam": 0.0,
+                "luy_ke": 1457500000.0,
+                "phan_tram_luy_ke": 40.81,
+                "con_lai_luy_ke": 2114850299.0
+            }
+        ],
+    "NSIP Phòng Kỹ Thuật":[
+            {
+                "thang": "202601",
+                "ngan_sach_thang": 1250000000.0,
+                "da_su_dung": 850000000.0,
+                "phan_tram_thang": 68.00,
+                "con_lai_thang": 400000000.0,
+                "ngan_sach_nam": 15000000000.0,
+                "phan_tram_nam": 5.67,
+                "luy_ke": 850000000.0,
+                "phan_tram_luy_ke": 5.67,
+                "con_lai_luy_ke": 14150000000.0
+            },
+            {
+                "thang": "202602",
+                "ngan_sach_thang": 1200000000.0,
+                "da_su_dung": 950000000.0,
+                "phan_tram_thang": 79.17,
+                "con_lai_thang": 250000000.0,
+                "ngan_sach_nam": 15000000000.0,
+                "phan_tram_nam": 6.33,
+                "luy_ke": 1800000000.0,
+                "phan_tram_luy_ke": 12.00,
+                "con_lai_luy_ke": 13200000000.0
+            },
+            {
+                "thang": "202603",
+                "ngan_sach_thang": 1300000000.0,
+                "da_su_dung": 2000000000.0,
+                "phan_tram_thang": 153.85,
+                "con_lai_thang": -700000000.0,
+                "ngan_sach_nam": 15000000000.0,
+                "phan_tram_nam": 13.33,
+                "luy_ke": 3800000000.0,
+                "phan_tram_luy_ke": 25.33,
+                "con_lai_luy_ke": 11200000000.0
+            }
+        ],
+    "NSIP Phòng Kinh Doanh":[
+            {
+                "thang": "202601",
+                "ngan_sach_thang": 3000000000.0,
+                "da_su_dung": 2200000000.0,
+                "phan_tram_thang": 73.33,
+                "con_lai_thang": 800000000.0,
+                "ngan_sach_nam": 35200000000.0,
+                "phan_tram_nam": 6.25,
+                "luy_ke": 2200000000.0,
+                "phan_tram_luy_ke": 6.25,
+                "con_lai_luy_ke": 33000000000.0
+            },
+            {
+                "thang": "202602",
+                "ngan_sach_thang": 2800000000.0,
+                "da_su_dung": 500000000.0,
+                "phan_tram_thang": 17.86,
+                "con_lai_thang": 2300000000.0,
+                "ngan_sach_nam": 35200000000.0,
+                "phan_tram_nam": 1.42,
+                "luy_ke": 2700000000.0,
+                "phan_tram_luy_ke": 7.67,
+                "con_lai_luy_ke": 32500000000.0
+            }
+        ]
+};
         
         // Biến cho sắp xếp
         let currentSortColumn = null;
@@ -1743,37 +1847,51 @@
 
         // chuyển đổi loại biểu đồ
         function switchChartMode(mode) {
-            chartMode = mode;
-            const chartContainer = document.getElementById('chartContainer');
-            const compactBtn = document.getElementById('compactModeBtn');
-            const scrollBtn = document.getElementById('scrollModeBtn');
-            
-            compactBtn.classList.toggle('active', mode === 'compact');
-            scrollBtn.classList.toggle('active', mode === 'scroll');
-            
-            if (mode === 'compact') {
-                chartContainer.className = 'chart-mode-compact';
-            } else {
-                chartContainer.className = 'chart-mode-scrollable';
-                const canvas = document.getElementById('mainChart');
-                if (canvas) {
-                    let canvasWrapper = chartContainer.querySelector('.chart-canvas-scrollable');
-                    if (!canvasWrapper) {
-                        canvasWrapper = document.createElement('div');
-                        canvasWrapper.className = 'chart-canvas-scrollable';
-                        chartContainer.innerHTML = '';
-                        canvasWrapper.appendChild(canvas);
-                        chartContainer.appendChild(canvasWrapper);
-                    }
-                }
-            }
-            
-            const currentDept = document.getElementById('departmentSelect').value;
-            if (currentDept) {
-                createChart(currentDept);
+    chartMode = mode;
+    const chartContainer = document.getElementById('chartContainer');
+    const compactBtn = document.getElementById('compactModeBtn');
+    const scrollBtn = document.getElementById('scrollModeBtn');
+    
+    compactBtn.classList.toggle('active', mode === 'compact');
+    scrollBtn.classList.toggle('active', mode === 'scroll');
+    
+    if (mode === 'compact') {
+        chartContainer.className = 'chart-mode-compact';
+        // XÓA wrapper nếu có
+        const wrapper = chartContainer.querySelector('.chart-canvas-scrollable');
+        if (wrapper) {
+            const canvas = document.getElementById('mainChart');
+            chartContainer.innerHTML = '';
+            chartContainer.appendChild(canvas);
+        }
+    } else {
+        chartContainer.className = 'chart-mode-scrollable';
+        const canvas = document.getElementById('mainChart');
+        if (canvas) {
+            let canvasWrapper = chartContainer.querySelector('.chart-canvas-scrollable');
+            if (!canvasWrapper) {
+                canvasWrapper = document.createElement('div');
+                canvasWrapper.className = 'chart-canvas-scrollable';
+                chartContainer.innerHTML = '';
+                canvasWrapper.appendChild(canvas);
+                chartContainer.appendChild(canvasWrapper);
             }
         }
-
+    }
+    
+    // QUAN TRỌNG: Vẽ lại biểu đồ sau khi chuyển chế độ
+    const currentDept = document.getElementById('departmentSelect').value;
+    if (currentDept && currentChart) {
+        // Hủy chart cũ
+        currentChart.destroy();
+        currentChart = null;
+        
+        // Đợi một chút để DOM cập nhật
+        setTimeout(() => {
+            createChart(currentDept);
+        }, 100);
+    }
+}
         // Tạo biểu đồ đường
         function createChart(deptName) {
             const ctx = document.getElementById('mainChart');

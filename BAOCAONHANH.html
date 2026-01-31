@@ -113,8 +113,7 @@
     padding: 25px;
     background: linear-gradient(to bottom right, #ffffff, #f8f9fa);
     border-radius: 10px;
-    overflow: hidden !important;
-    contain: strict;
+    overflow: visible !important;
 }
 
 .chart-canvas-wrapper{
@@ -149,6 +148,7 @@
     height: 100%;
     pointer-events: none;
     z-index: 5;
+    overflow: visible;
 }
 
 /* Chart labels */
@@ -594,81 +594,168 @@ div.dt-search {
     }
     
     .filter-bar {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
+        padding: 10px 12px;
+        gap: 6px;
     }
     
-    .filter-bar > div {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        width: 100%;
+    .filter-bar > * {
+        margin: 0 !important;
     }
     
     .filter-bar label {
-        flex: 0 0 80px;
+        font-size: 11px;
+        min-width: 65px;
+        margin-right: 4px !important;
     }
     
-    #monthPicker, #yearSelect, #allMonthsBtn, #refreshBtn {
-        flex: 1;
-        min-width: 0;
+    #yearSelect {
+        width: 85px !important;
+        font-size: 12px;
     }
     
-    .chart-wrap {
-        height: 320px !important;
-        min-height: 320px !important;
-        padding: 10px;
+    #monthPicker {
+        width: 120px !important;
+        font-size: 12px;
     }
     
-    .chart-canvas-wrapper {
-        width: 200px !important;
-        height: 200px !important;
+    #allMonthsBtn {
+        font-size: 11px;
+        padding: 5px 8px;
+        white-space: nowrap;
     }
     
-    .chart-label {
-        min-width: 60px !important;
-        max-width: 80px !important;
-        font-size: 7px !important;
-        padding: 3px 6px !important;
+    .filter-bar .ms-auto {
+        margin-left: 0 !important;
+        width: 100%;
+        margin-top: 4px !important;
     }
     
-    .center-text-container {
-        width: 80px;
+    #refreshBtn {
+        width: 100%;
+        font-size: 12px;
+        padding: 6px 12px;
     }
     
-    .center-total-label {
-        font-size: 10px !important;
+    /* Stack panels vertically on mobile */
+    .main-content {
+        flex-direction: column !important;
     }
     
-    .center-total-value {
-        font-size: 12px !important;
-    }
-    
-    .right-table-container {
-        max-height: 350px;
-    }
-    
-    table.dataTable thead th,
-    table.dataTable tbody td {
-        font-size: 10px;
-        padding: 4px 4px;
-    }
-}
-
-@media (min-width: 768px) and (max-width: 992px) {
-    .main-content{
-        flex-direction: column;
+    .left-panel, 
+    .right-panel {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
     }
     
     .chart-wrap {
         height: 380px !important;
         min-height: 380px !important;
+        padding: 15px 10px;
     }
     
     .chart-canvas-wrapper {
         width: 220px !important;
         height: 220px !important;
+    }
+    
+    .chart-label {
+        min-width: 80px !important;
+        max-width: 100px !important;
+        font-size: 7px !important;
+        padding: 4px 7px !important;
+    }
+    
+    .chart-label .dept-name,
+    .chart-label .dept-pct {
+        font-size: 7px !important;
+    }
+    
+    .right-table-container {
+        max-height: 450px;
+    }
+    
+    table.dataTable thead th,
+    table.dataTable tbody td {
+        font-size: 10px !important;
+        padding: 5px 4px !important;
+    }
+    
+    #tableLeft th,
+    #tableLeft td {
+        font-size: 10px !important;
+        padding: 6px 5px !important;
+    }
+}
+
+@media (min-width: 577px) and (max-width: 768px) {
+    .filter-bar {
+        padding: 12px 15px;
+        gap: 8px;
+    }
+    
+    /* Stack panels vertically on small tablets */
+    .main-content {
+        flex-direction: column !important;
+    }
+    
+    .left-panel, 
+    .right-panel {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+    }
+    
+    .chart-wrap {
+        height: 400px !important;
+        min-height: 400px !important;
+        padding: 20px 15px;
+    }
+    
+    .chart-canvas-wrapper {
+        width: 240px !important;
+        height: 240px !important;
+    }
+    
+    .chart-label {
+        min-width: 95px !important;
+        max-width: 115px !important;
+        font-size: 8px !important;
+        padding: 4px 8px !important;
+    }
+    
+    .right-table-container {
+        max-height: 450px;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 992px) {
+    .main-content{
+        flex-direction: column !important;
+    }
+    
+    .left-panel, .right-panel{
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+    }
+    
+    .chart-wrap {
+        height: 400px !important;
+        min-height: 400px !important;
+    }
+    
+    .chart-canvas-wrapper {
+        width: 260px !important;
+        height: 260px !important;
+    }
+    
+    .chart-label {
+        min-width: 100px !important;
+        max-width: 120px !important;
+        font-size: 8.5px !important;
+        padding: 5px 9px !important;
+    }
+    
+    .right-table-container {
+        max-height: 500px;
     }
 }
 
@@ -702,33 +789,6 @@ div.dt-search {
         padding: 5px 10px !important;
     }
 }
-@media (max-width: 992px) {
-    .main-content{
-        flex-direction: column;
-    }
-    .left-panel, .right-panel{
-        flex: 0 0 100%;
-        max-width: 100%;
-    }
-    
-    .chart-wrap {
-        height: 400px;
-        min-height: 400px;
-        padding: 15px;
-    }
-    
-    .chart-canvas-wrapper {
-        width: 200px;
-        height: 200px;
-    }
-    
-    .chart-label {
-        min-width: 90px !important;
-        max-width: 110px !important;
-        font-size: 8px !important;
-        padding: 4px 8px;
-    }
-}
 
 /* Modal styling */
 .modal-header {
@@ -738,6 +798,16 @@ div.dt-search {
 
 .modal-title {
     font-weight: 600;
+}
+.dept-total-row {
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace !important;
+    font-weight: 700 !important;
+    background-color: rgba(74, 111, 165, 0.05) !important;
+}
+
+.dept-total-row td {
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace !important;
+    font-weight: 700 !important;
 }
 
 /* Modal footer buttons */
@@ -911,6 +981,16 @@ const ALL_DATA = {
                     "%/năm": 0
                 },
                 {
+                    "Bộ phận": "NSIP Phòng TC-KT",
+                    "Nhóm ngân sách": "1120-Chi phí dịch vụ mua ngoài",
+                    "Đã dùng": 850000000,
+                    "NS tháng": 1200000000,
+                    "Còn lại": 13500000000,
+                    "%/tháng": 70.8,
+                    "Ngân sách năm": 14350000000,
+                    "%/năm": 5.9
+                },
+                {
                     "Bộ phận": "NSIP HCNS",
                     "Nhóm ngân sách": "1010-Lương cơ bản",
                     "Đã dùng": 0,
@@ -925,10 +1005,20 @@ const ALL_DATA = {
                     "Nhóm ngân sách": "1020-Phụ cấp",
                     "Đã dùng": 0,
                     "NS tháng": 10399298802,
-                    "Còn lại": 133971631342,
+                    "Còn lại": 89971631342,
                     "%/tháng": 0,
-                    "Ngân sách năm": 133971631342,
+                    "Ngân sách năm": 89971631342,
                     "%/năm": 0
+                },
+                {
+                    "Bộ phận": "NSIP HCNS",
+                    "Nhóm ngân sách": "1030-Bảo hiểm",
+                    "Đã dùng": 3200000000,
+                    "NS tháng": 4500000000,
+                    "Còn lại": 54000000000,
+                    "%/tháng": 71.1,
+                    "Ngân sách năm": 57200000000,
+                    "%/năm": 5.6
                 },
                 {
                     "Bộ phận": "NSIP Xưởng Cơ Điện",
@@ -939,6 +1029,36 @@ const ALL_DATA = {
                     "%/tháng": 82.4,
                     "Ngân sách năm": 44325611213,
                     "%/năm": 3.6
+                },
+                {
+                    "Bộ phận": "NSIP Xưởng Cơ Điện",
+                    "Nhóm ngân sách": "1520-Chi phí công cụ dụng cụ",
+                    "Đã dùng": 750000000,
+                    "NS tháng": 900000000,
+                    "Còn lại": 10500000000,
+                    "%/tháng": 83.3,
+                    "Ngân sách năm": 11250000000,
+                    "%/năm": 6.7
+                },
+                {
+                    "Bộ phận": "NSIP Phòng Kinh Doanh",
+                    "Nhóm ngân sách": "3010-Chi phí marketing",
+                    "Đã dùng": 2200000000,
+                    "NS tháng": 3000000000,
+                    "Còn lại": 33000000000,
+                    "%/tháng": 73.3,
+                    "Ngân sách năm": 35200000000,
+                    "%/năm": 6.3
+                },
+                {
+                    "Bộ phận": "NSIP Phòng Kinh Doanh",
+                    "Nhóm ngân sách": "3020-Chi phí tiếp khách",
+                    "Đã dùng": 450000000,
+                    "NS tháng": 800000000,
+                    "Còn lại": 8800000000,
+                    "%/tháng": 56.3,
+                    "Ngân sách năm": 9250000000,
+                    "%/năm": 4.9
                 }
             ],
             "02": [
@@ -953,6 +1073,16 @@ const ALL_DATA = {
                     "%/năm": 0.2
                 },
                 {
+                    "Bộ phận": "NSIP Phòng TC-KT",
+                    "Nhóm ngân sách": "2010-Chi phí lãi vay",
+                    "Đã dùng": 35000000,
+                    "NS tháng": 75000000,
+                    "Còn lại": 650403977,
+                    "%/tháng": 46.7,
+                    "Ngân sách năm": 685403977,
+                    "%/năm": 5.1
+                },
+                {
                     "Bộ phận": "NSIP Xưởng Cơ Điện",
                     "Nhóm ngân sách": "1520-Chi phí sửa chữa",
                     "Đã dùng": 1292831466,
@@ -963,6 +1093,16 @@ const ALL_DATA = {
                     "%/năm": 2.9
                 },
                 {
+                    "Bộ phận": "NSIP Xưởng Cơ Điện",
+                    "Nhóm ngân sách": "1530-Chi phí nhiên liệu",
+                    "Đã dùng": 1850000000,
+                    "NS tháng": 2000000000,
+                    "Còn lại": 21500000000,
+                    "%/tháng": 92.5,
+                    "Ngân sách năm": 23350000000,
+                    "%/năm": 7.9
+                },
+                {
                     "Bộ phận": "NSIP Phòng Kinh Doanh",
                     "Nhóm ngân sách": "3010-Chi phí marketing",
                     "Đã dùng": 500000000,
@@ -971,6 +1111,26 @@ const ALL_DATA = {
                     "%/tháng": 50.0,
                     "Ngân sách năm": 25000000000,
                     "%/năm": 2.0
+                },
+                {
+                    "Bộ phận": "NSIP Phòng Kinh Doanh",
+                    "Nhóm ngân sách": "3030-Hoa hồng bán hàng",
+                    "Đã dùng": 1200000000,
+                    "NS tháng": 1500000000,
+                    "Còn lại": 16300000000,
+                    "%/tháng": 80.0,
+                    "Ngân sách năm": 17500000000,
+                    "%/năm": 6.9
+                },
+                {
+                    "Bộ phận": "NSIP Phòng Kỹ Thuật",
+                    "Nhóm ngân sách": "4010-Chi phí nghiên cứu",
+                    "Đã dùng": 850000000,
+                    "NS tháng": 1200000000,
+                    "Còn lại": 14150000000,
+                    "%/tháng": 70.8,
+                    "Ngân sách năm": 15000000000,
+                    "%/năm": 5.7
                 }
             ],
             "03": [
@@ -983,9 +1143,68 @@ const ALL_DATA = {
                     "%/tháng": 40.0,
                     "Ngân sách năm": 15000000000,
                     "%/năm": 13.3
+                },
+                {
+                    "Bộ phận": "NSIP Phòng Kỹ Thuật",
+                    "Nhóm ngân sách": "4020-Chi phí đào tạo kỹ thuật",
+                    "Đã dùng": 320000000,
+                    "NS tháng": 500000000,
+                    "Còn lại": 5680000000,
+                    "%/tháng": 64.0,
+                    "Ngân sách năm": 6000000000,
+                    "%/năm": 5.3
+                },
+                {
+                    "Bộ phận": "NSIP Phòng IT",
+                    "Nhóm ngân sách": "5010-Chi phí phần mềm",
+                    "Đã dùng": 450000000,
+                    "NS tháng": 600000000,
+                    "Còn lại": 6550000000,
+                    "%/tháng": 75.0,
+                    "Ngân sách năm": 7000000000,
+                    "%/năm": 6.4
+                },
+                {
+                    "Bộ phận": "NSIP Phòng IT",
+                    "Nhóm ngân sách": "5020-Chi phí bảo trì hệ thống",
+                    "Đã dùng": 280000000,
+                    "NS tháng": 400000000,
+                    "Còn lại": 3720000000,
+                    "%/tháng": 70.0,
+                    "Ngân sách năm": 4000000000,
+                    "%/năm": 7.0
                 }
             ],
-            "04": []  
+            "04": [
+                {
+                    "Bộ phận": "NSIP HCNS",
+                    "Nhóm ngân sách": "1040-Chi phí đào tạo nhân sự",
+                    "Đã dùng": 620000000,
+                    "NS tháng": 1000000000,
+                    "Còn lại": 9380000000,
+                    "%/tháng": 62.0,
+                    "Ngân sách năm": 10000000000,
+                    "%/năm": 6.2
+                },
+                {
+                    "Bộ phận": "NSIP Phòng TC-KT",
+                    "Nhóm ngân sách": "1130-Chi phí kiểm toán",
+                    "Đã dùng": 350000000,
+                    "NS tháng": 500000000,
+                    "Còn lại": 4650000000,
+                    "%/tháng": 70.0,
+                    "Ngân sách năm": 5000000000,
+                    "%/năm": 7.0
+                }
+            ],
+            "05": [],
+            "06": [],
+            "07": [],
+            "08": [],
+            "09": [],
+            "10": [],
+            "11": [],
+            "12": []
         },
         "2025": {
             "01": [
@@ -998,6 +1217,16 @@ const ALL_DATA = {
                     "%/tháng": 1.3,
                     "Ngân sách năm": 510000000000,
                     "%/năm": 0.1
+                },
+                {
+                    "Bộ phận": "NSIP HCNS",
+                    "Nhóm ngân sách": "1010-Lương cơ bản",
+                    "Đã dùng": 0,
+                    "NS tháng": 12500000000,
+                    "Còn lại": 115000000000,
+                    "%/tháng": 0,
+                    "Ngân sách năm": 115000000000,
+                    "%/năm": 0
                 }
             ],
             "02": [
@@ -1010,6 +1239,61 @@ const ALL_DATA = {
                     "%/tháng": 3.7,
                     "Ngân sách năm": 520000000000,
                     "%/năm": 0.3
+                },
+                {
+                    "Bộ phận": "NSIP Xưởng Cơ Điện",
+                    "Nhóm ngân sách": "1510-Chi phí vật tư",
+                    "Đã dùng": 1250000000,
+                    "NS tháng": 1800000000,
+                    "Còn lại": 38750000000,
+                    "%/tháng": 69.4,
+                    "Ngân sách năm": 40000000000,
+                    "%/năm": 3.1
+                }
+            ],
+            "03": [
+                {
+                    "Bộ phận": "NSIP Phòng Kinh Doanh",
+                    "Nhóm ngân sách": "3010-Chi phí marketing",
+                    "Đã dùng": 2800000000,
+                    "NS tháng": 3500000000,
+                    "Còn lại": 27200000000,
+                    "%/tháng": 80.0,
+                    "Ngân sách năm": 30000000000,
+                    "%/năm": 9.3
+                }
+            ],
+            "04": [],
+            "05": [],
+            "06": [],
+            "07": [],
+            "08": [],
+            "09": [],
+            "10": [],
+            "11": [],
+            "12": []
+        },
+        "2024": {
+            "12": [
+                {
+                    "Bộ phận": "NSIP Phòng TC-KT",
+                    "Nhóm ngân sách": "1116-Chi phí thuê tài sản",
+                    "Đã dùng": 38000000000,
+                    "NS tháng": 45000000000,
+                    "Còn lại": 20000000000,
+                    "%/tháng": 84.4,
+                    "Ngân sách năm": 500000000000,
+                    "%/năm": 7.6
+                },
+                {
+                    "Bộ phận": "NSIP HCNS",
+                    "Nhóm ngân sách": "1010-Lương cơ bản",
+                    "Đã dùng": 11000000000,
+                    "NS tháng": 12000000000,
+                    "Còn lại": 10000000000,
+                    "%/tháng": 91.7,
+                    "Ngân sách năm": 120000000000,
+                    "%/năm": 9.2
                 }
             ]
         }
@@ -1318,7 +1602,7 @@ function updateChart() {
     setTimeout(createChartLabels, 100);
 }
 
-//Chú thích và các đường kết nối
+//Chú thích và các đường kết nối - FIX cho mobile
 function createChartLabels() {
     const container = document.getElementById('chartContainer');
     const svg = document.getElementById('connectorSvg');
@@ -1348,8 +1632,11 @@ function createChartLabels() {
         y: containerHeight / 2
     };
     
-    const chartRadius = 100;
-    const doughnutWidth = chartRadius * 0.75; 
+    // Lấy kích thước thực của canvas
+    const canvasWrapper = container.querySelector('.chart-canvas-wrapper');
+    const canvasWidth = canvasWrapper ? canvasWrapper.offsetWidth : 280;
+    const chartRadius = canvasWidth / 2;
+    const doughnutWidth = chartRadius * 0.25; 
     
     currentDeptData.forEach((dept, index) => {
         const sliceAngle = sliceAngles[index];
@@ -1359,22 +1646,20 @@ function createChartLabels() {
         const percentage = total > 0 ? ((dept['Tổng ngân sách'] / total) * 100).toFixed(1) : '0';
         const color = dept.màu || CHART_COLORS[index];
         
-        const innerRadius = chartRadius - doughnutWidth; 
-        const middleRadius = chartRadius + (doughnutWidth * 0.25); 
-        
-        const chartPointX = chartCenter.x + Math.cos(sliceAngle.middle) * middleRadius;
-        const chartPointY = chartCenter.y + Math.sin(sliceAngle.middle) * middleRadius;
+        // Tính điểm trên edge của biểu đồ (ranh giới màu sắc)
+        const outerRadius = chartRadius;
+        const chartPointX = chartCenter.x + Math.cos(sliceAngle.middle) * outerRadius;
+        const chartPointY = chartCenter.y + Math.sin(sliceAngle.middle) * outerRadius;
         
         const angle = sliceAngle.middle;
         let labelX, labelY;
-        let labelAlign = '';
         let labelConnectorX, labelConnectorY;
         
-        const labelPadding = 20;
-        const minDistance = middleRadius + 80; 
+        const labelPadding = 15;
+        const labelDistance = outerRadius + 60;
         
-        labelX = chartCenter.x + Math.cos(angle) * minDistance;
-        labelY = chartCenter.y + Math.sin(angle) * minDistance;
+        labelX = chartCenter.x + Math.cos(angle) * labelDistance;
+        labelY = chartCenter.y + Math.sin(angle) * labelDistance;
         
         const label = document.createElement('div');
         label.className = 'chart-label';
@@ -1382,7 +1667,7 @@ function createChartLabels() {
         label.style.color = color;
         label.style.boxShadow = `0 4px 12px ${color}40`;
         label.style.zIndex = '20';
-        label.style.opacity = '0'; 
+        label.style.opacity = '0';
         
         label.innerHTML = `
             <span class="dept-name">${shortName}</span>
@@ -1397,96 +1682,46 @@ function createChartLabels() {
         const cosAngle = Math.cos(angle);
         const sinAngle = Math.sin(angle);
         
+        // Đặt label vào vị trí thích hợp
         if (Math.abs(cosAngle) > Math.abs(sinAngle)) {
-            // Gần trục ngang
             if (cosAngle > 0) {
-                // Bên phải - label nằm bên phải chart
-                labelAlign = 'right';
                 labelX = containerWidth - labelWidth - labelPadding;
                 labelConnectorX = labelX;
                 labelConnectorY = labelY;
             } else {
-                // Bên trái - label nằm bên trái chart
-                labelAlign = 'left';
                 labelX = labelPadding;
                 labelConnectorX = labelX + labelWidth;
                 labelConnectorY = labelY;
             }
         } else {
-            // Gần trục dọc
             if (sinAngle > 0) {
-                // Phía dưới - label nằm dưới chart
-                labelAlign = 'bottom';
                 labelY = containerHeight - labelHeight - labelPadding;
                 labelConnectorX = labelX + labelWidth / 2;
                 labelConnectorY = labelY;
             } else {
-                // Phía trên - label nằm trên chart
-                labelAlign = 'top';
                 labelY = labelPadding;
                 labelConnectorX = labelX + labelWidth / 2;
                 labelConnectorY = labelY + labelHeight;
             }
         }
         
-        const chartLeft = chartCenter.x - chartRadius - 20;
-        const chartRight = chartCenter.x + chartRadius + 20;
-        const chartTop = chartCenter.y - chartRadius - 20;
-        const chartBottom = chartCenter.y + chartRadius + 20;
-        
-        const labelLeft = labelX;
-        const labelRight = labelX + labelWidth;
-        const labelTop = labelY;
-        const labelBottom = labelY + labelHeight;
-        
-        const isOverlapping = 
-            labelRight > chartLeft && 
-            labelLeft < chartRight && 
-            labelBottom > chartTop && 
-            labelTop < chartBottom;
-        
-        if (isOverlapping) {
-            // Đẩy label ra xa hơn
-            if (labelAlign === 'right') {
-                labelX = containerWidth - labelWidth - labelPadding - 50;
-                labelConnectorX = labelX;
-            } else if (labelAlign === 'left') {
-                labelX = labelPadding + 50;
-                labelConnectorX = labelX + labelWidth;
-            } else if (labelAlign === 'bottom') {
-                labelY = containerHeight - labelHeight - labelPadding - 50;
-                labelConnectorY = labelY;
-            } else if (labelAlign === 'top') {
-                labelY = labelPadding + 50;
-                labelConnectorY = labelY + labelHeight;
-            }
-        }
-        
-        // Cập nhật vị trí label
         label.style.left = `${labelX}px`;
         label.style.top = `${labelY}px`;
         label.style.opacity = '1';
         
-        // ĐIỀU CHỈNH LẠI ĐIỂM KẾT NỐI TRÊN LABEL SAU KHI ĐÃ CÓ VỊ TRÍ CUỐI
-        if (labelAlign === 'right') {
-            labelConnectorX = labelX;
+        // Điều chỉnh connector point trên label
+        if (Math.abs(cosAngle) > Math.abs(sinAngle)) {
             labelConnectorY = labelY + labelHeight / 2;
-        } else if (labelAlign === 'left') {
-            labelConnectorX = labelX + labelWidth;
-            labelConnectorY = labelY + labelHeight / 2;
-        } else if (labelAlign === 'bottom') {
+        } else {
             labelConnectorX = labelX + labelWidth / 2;
-            labelConnectorY = labelY;
-        } else if (labelAlign === 'top') {
-            labelConnectorX = labelX + labelWidth / 2;
-            labelConnectorY = labelY + labelHeight;
         }
         
+        // Vẽ đường nối ĐÚNG - từ edge biểu đồ tới label
         const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line.setAttribute('x1', labelConnectorX);
-        line.setAttribute('y1', labelConnectorY);
-        line.setAttribute('x2', chartPointX);
-        line.setAttribute('y2', chartPointY);
+        line.setAttribute('x1', chartPointX);
+        line.setAttribute('y1', chartPointY);
+        line.setAttribute('x2', labelConnectorX);
+        line.setAttribute('y2', labelConnectorY);
         line.setAttribute('stroke', color);
         line.setAttribute('stroke-width', '2');
         line.setAttribute('opacity', '0.7');
@@ -1494,6 +1729,7 @@ function createChartLabels() {
         
         svg.appendChild(line);
         
+        // Chấm tròn trên edge biểu đồ
         const chartDot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         chartDot.setAttribute('cx', chartPointX);
         chartDot.setAttribute('cy', chartPointY);
@@ -1504,6 +1740,7 @@ function createChartLabels() {
         
         svg.appendChild(chartDot);
         
+        // Chấm tròn trên label
         const labelDot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         labelDot.setAttribute('cx', labelConnectorX);
         labelDot.setAttribute('cy', labelConnectorY);
@@ -1890,13 +2127,6 @@ $(document).ready(function() {
                 
                 setTimeout(() => {
                     createChartLabels();
-                    
-                    setTimeout(() => {
-                        const labels = container.querySelectorAll('.chart-label');
-                        labels.forEach(label => {
-                            adjustLabelPosition(label, container);
-                        });
-                    }, 100);
                 }, 100);
             }
         }, 250);
